@@ -1,0 +1,546 @@
+ 0000                   cpu LMM
+                        .module main.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile ./main.c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile ./main.c
+ 0000           _Flag_ISR_Timer::
+ 0000 00                .byte 0
+ 0001                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\main.c
+ 0001                   .dbsym e Flag_ISR_Timer _Flag_ISR_Timer c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\main.c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\main.c
+ 0000           _Flag_ISR_Timer_fast::
+ 0000 00                .byte 0
+ 0001                   .dbsym e Flag_ISR_Timer_fast _Flag_ISR_Timer_fast c
+                        .area data(ram, con, rel)
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\main.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\main.c
+ 0000                   .dbfunc e main _main fV
+ 0000                   .dbstruct 0 12 .1
+ 0000                   .dbfield 0 signature I
+ 0000                   .dbfield 2 checksum I
+ 0000                   .dbfield 4 x I
+ 0000                   .dbfield 6 y I
+ 0000                   .dbfield 8 width I
+ 0000                   .dbfield 10 height I
+ 0000                   .dbend
+ 0000           ;              a -> X+30
+ 0000           ;   pulsewidth_X -> X+28
+ 0000           ;   pulsewidth_Z -> X+26
+ 0000           ;              i -> X+24
+ 0000           ;      camDroite -> X+12
+ 0000           ;      camGauche -> X+0
+ 0000           _main::
+ 0000                   .dbline -1
+ 0000 10                push X
+ 0001 4F                mov X,SP
+ 0002 3850              add SP,80
+ 0004                   .dbline 32
+ 0004           ; /**
+ 0004           ;  * \file              main.c
+ 0004           ;  * \brief             Projet tourelle mobile 1. Contient la boucle principale du programme.
+ 0004           ;  * \author            Systendo
+ 0004           ;  * \version   1.1
+ 0004           ;  * \date              26 septembre 2016
+ 0004           ;  *
+ 0004           ;  * Ce projet utilise le projet tourelle fixe et peut détecter un PoKeanMon à la fois. L'amélioration apportée
+ 0004           ;  * est un balayage horizontal et vertical des tourelles grâce aux servo-moteurs commandés par des modules PWM
+ 0004           ;  *
+ 0004           ;  */
+ 0004           ; 
+ 0004           ; #include <m8c.h>
+ 0004           ; #include "PSoCAPI.h"
+ 0004           ; #include <stdio.h>
+ 0004           ; #include <stdlib.h>
+ 0004           ; #include <string.h>
+ 0004           ; 
+ 0004           ; #include "Motor_Functions.h"
+ 0004           ; #include "camgauche.h"
+ 0004           ; #include "camdroite.h"
+ 0004           ; #include "affichage.h"
+ 0004           ; #include "InitialisationBlock.h"
+ 0004           ; 
+ 0004           ; /// Constantes et flags du timer
+ 0004           ; unsigned char Flag_ISR_Timer = 0;             // Flag se mettant à 1 tous les 200ms
+ 0004           ; unsigned char Flag_ISR_Timer_fast = 0;        // Flag se mettant à 1 tous les 50ms
+ 0004           ; char count;
+ 0004           ; 
+ 0004           ; 
+ 0004           ; void main(void)
+ 0004           ; {
+ 0004                   .dbline 36
+ 0004           ;       int *pulsewidth_Z;
+ 0004           ;       int *pulsewidth_X;
+ 0004           ;       int *a;
+ 0004           ;       int i = 0x01;
+ 0004 561901            mov [X+25],1
+ 0007 561800            mov [X+24],0
+ 000A                   .dbline 40
+ 000A           ;       Block camGauche;        // Correspond à une cible détectée sur la caméra gauche
+ 000A           ;       Block camDroite;        // Correspond à une cible détectée sur la caméra droite
+ 000A           ;       
+ 000A           ;       *pulsewidth_Z = 0;
+ 000A 62D000            mov REG[0xd0],>__r0
+ 000D 521B              mov A,[X+27]
+ 000F 5300              mov [__r1],A
+ 0011 521A              mov A,[X+26]
+ 0013 60D5              mov REG[0xd5],A
+ 0015 5000              mov A,0
+ 0017 3F00              mvi [__r1],A
+ 0019 3F00              mvi [__r1],A
+ 001B                   .dbline 41
+ 001B           ;       *pulsewidth_X = 0;
+ 001B 521D              mov A,[X+29]
+ 001D 5300              mov [__r1],A
+ 001F 521C              mov A,[X+28]
+ 0021 60D5              mov REG[0xd5],A
+ 0023 5000              mov A,0
+ 0025 3F00              mvi [__r1],A
+ 0027 3F00              mvi [__r1],A
+ 0029                   .dbline 42
+ 0029           ;       *a = 0;
+ 0029 521F              mov A,[X+31]
+ 002B 5300              mov [__r1],A
+ 002D 521E              mov A,[X+30]
+ 002F 60D5              mov REG[0xd5],A
+ 0031 5000              mov A,0
+ 0033 3F00              mvi [__r1],A
+ 0035 3F00              mvi [__r1],A
+ 0037                   .dbline 45
+ 0037           ;       
+ 0037           ;       /// Démarrage des différents modules
+ 0037           ;       SPIM_CamGauche_Start(SPIM_CamGauche_SPIM_MODE_0 | SPIM_CamGauche_SPIM_MSB_FIRST);
+ 0037 10                push X
+ 0038 7C0000            xcall _SPIM_CamGauche_Start
+ 003B                   .dbline 46
+ 003B           ;       SPIM_CamDroite_Start(SPIM_CamDroite_SPIM_MODE_0 | SPIM_CamDroite_SPIM_MSB_FIRST);
+ 003B 5000              mov A,0
+ 003D 7C0000            xcall _SPIM_CamDroite_Start
+ 0040                   .dbline 47
+ 0040           ;       UART_Start(UART_PARITY_NONE);   
+ 0040 5000              mov A,0
+ 0042 7C0000            xcall _UART_Start
+ 0045                   .dbline 48
+ 0045           ;       TimerCamera_Start();
+ 0045 7C0000            xcall _TimerCamera_Start
+ 0048                   .dbline 49
+ 0048           ;       TimerCamera_EnableInt();
+ 0048 7C0000            xcall _TimerCamera_EnableInt
+ 004B                   .dbline 50
+ 004B           ;       LCD_Start();
+ 004B 7C0000            xcall _LCD_Start
+ 004E 20                pop X
+ 004F                   .dbline 51
+ 004F           ;       Init_Motor();
+ 004F 7C0000            xcall _Init_Motor
+ 0052                   .dbline 54
+ 0052           ;       
+ 0052           ;       /// Active les interruptions globales et locales
+ 0052           ;       M8C_EnableGInt;
+ 0052 7101                      or  F, 01h
+ 0054           
+ 0054 81E3              xjmp L4
+ 0056           L3:
+ 0056                   .dbline 57
+ 0056           ;       
+ 0056           ;       while(1)        // Boucle principale
+ 0056           ;       {
+ 0056                   .dbline 58
+ 0056           ;               if (Flag_ISR_Timer == 1){
+ 0056 62D000            mov REG[0xd0],>_Flag_ISR_Timer
+ 0059 3C0001            cmp [_Flag_ISR_Timer],1
+ 005C B1DB              jnz L6
+ 005E                   .dbline 60
+ 005E           ;                       
+ 005E           ;                       LED_Invert();
+ 005E                   .dbline 60
+ 005E 10                push X
+ 005F 7C0000            xcall _LED_Invert
+ 0062 20                pop X
+ 0063                   .dbline 61
+ 0063           ;                       Flag_ISR_Timer_fast = 0;
+ 0063 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 0066 550000            mov [_Flag_ISR_Timer_fast],0
+ 0069 8043              xjmp L9
+ 006B           L8:
+ 006B                   .dbline 63
+ 006B           ;                       while(getStart_CamGauche() == 0)                // On cherche le début de frame 0xAA55AA56
+ 006B           ;                       { 
+ 006B                   .dbline 64
+ 006B           ;                               if (Flag_ISR_Timer_fast == 1)           // Attend 50ms et met des 0 dans le bloc si aucun Pokeanmon n'est détecté
+ 006B 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 006E 3C0001            cmp [_Flag_ISR_Timer_fast],1
+ 0071 B03B              jnz L11
+ 0073                   .dbline 66
+ 0073           ;                               {
+ 0073           ;                                       camGauche = InitialisationBlock(camGauche);
+ 0073                   .dbline 66
+ 0073 62D000            mov REG[0xd0],>__r0
+ 0076 5A00              mov [__r1],X
+ 0078 5A00              mov [__r3],X
+ 007A 060020            add [__r3],32
+ 007D 62D407            mov REG[0xd4],7
+ 0080 62D507            mov REG[0xd5],7
+ 0083 10                push X
+ 0084 570C              mov X,12
+ 0086           X1:
+ 0086 62D000            mov REG[0xd0],>__r0
+ 0089 3E00              mvi A,[__r1]
+ 008B 3F00              mvi [__r3],A
+ 008D 79                dec X
+ 008E BFF7              jnz X1
+ 0090 20                pop X
+ 0091 5A00              mov [__r1],X
+ 0093 060020            add [__r1],32
+ 0096 5007              mov A,7
+ 0098 08                push A
+ 0099 5100              mov A,[__r1]
+ 009B 08                push A
+ 009C 5007              mov A,7
+ 009E 08                push A
+ 009F 10                push X
+ 00A0 7C0000            xcall _InitialisationBlock
+ 00A3 38FC              add SP,-4
+ 00A5                   .dbline 67
+ 00A5           ;                                       Flag_ISR_Timer_fast = 0;
+ 00A5 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 00A8 550000            mov [_Flag_ISR_Timer_fast],0
+ 00AB                   .dbline 68
+ 00AB           ;                                       break;
+ 00AB 8011              xjmp L10
+ 00AD           L11:
+ 00AD                   .dbline 70
+ 00AD           ;                               }
+ 00AD           ;                       }
+ 00AD           L9:
+ 00AD                   .dbline 62
+ 00AD 7C0000            xcall _getStart_CamGauche
+ 00B0 62D000            mov REG[0xd0],>__r0
+ 00B3 3C0000            cmp [__r0],0
+ 00B6 B006              jnz X2
+ 00B8 3C0000            cmp [__r1],0
+ 00BB AFAF              jz L8
+ 00BD           X2:
+ 00BD           L10:
+ 00BD                   .dbline 72
+ 00BD           ;                       
+ 00BD           ;                       camGauche = ValeurBlockGauche(camGauche) ;              // Récupère les données de la caméra gauche (des 0 si rien n'est détecté)
+ 00BD 62D000            mov REG[0xd0],>__r0
+ 00C0 5A00              mov [__r1],X
+ 00C2 5A00              mov [__r3],X
+ 00C4 060020            add [__r3],32
+ 00C7 62D407            mov REG[0xd4],7
+ 00CA 62D507            mov REG[0xd5],7
+ 00CD 10                push X
+ 00CE 570C              mov X,12
+ 00D0           X3:
+ 00D0 62D000            mov REG[0xd0],>__r0
+ 00D3 3E00              mvi A,[__r1]
+ 00D5 3F00              mvi [__r3],A
+ 00D7 79                dec X
+ 00D8 BFF7              jnz X3
+ 00DA 20                pop X
+ 00DB 5A00              mov [__r1],X
+ 00DD 060020            add [__r1],32
+ 00E0 5007              mov A,7
+ 00E2 08                push A
+ 00E3 5100              mov A,[__r1]
+ 00E5 08                push A
+ 00E6 5007              mov A,7
+ 00E8 08                push A
+ 00E9 10                push X
+ 00EA 7C0000            xcall _ValeurBlockGauche
+ 00ED 38FC              add SP,-4
+ 00EF                   .dbline 74
+ 00EF           ;                       
+ 00EF           ;                       Flag_ISR_Timer_fast = 0;
+ 00EF 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 00F2 550000            mov [_Flag_ISR_Timer_fast],0
+ 00F5 804D              xjmp L14
+ 00F7           L13:
+ 00F7                   .dbline 76
+ 00F7           ;                       while(getStart_CamDroite() == 0)                // On cherche le début de frame 0xAA55AA56
+ 00F7           ;                       { 
+ 00F7                   .dbline 77
+ 00F7           ;                               if (Flag_ISR_Timer_fast == 1)           // Attend 50ms et met des 0 dans le bloc si aucun Pokeanmon n'est détecté
+ 00F7 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 00FA 3C0001            cmp [_Flag_ISR_Timer_fast],1
+ 00FD B045              jnz L16
+ 00FF                   .dbline 79
+ 00FF           ;                               {
+ 00FF           ;                                       camDroite = InitialisationBlock(camDroite) ;
+ 00FF                   .dbline 79
+ 00FF 62D000            mov REG[0xd0],>__r0
+ 0102 5A00              mov [__r1],X
+ 0104 06000C            add [__r1],12
+ 0107 5A00              mov [__r3],X
+ 0109 06002C            add [__r3],44
+ 010C 62D407            mov REG[0xd4],7
+ 010F 62D507            mov REG[0xd5],7
+ 0112 10                push X
+ 0113 570C              mov X,12
+ 0115           X4:
+ 0115 62D000            mov REG[0xd0],>__r0
+ 0118 3E00              mvi A,[__r1]
+ 011A 3F00              mvi [__r3],A
+ 011C 79                dec X
+ 011D BFF7              jnz X4
+ 011F 20                pop X
+ 0120 5A00              mov [__r1],X
+ 0122 06002C            add [__r1],44
+ 0125 5007              mov A,7
+ 0127 08                push A
+ 0128 5100              mov A,[__r1]
+ 012A 08                push A
+ 012B 5A00              mov [__r1],X
+ 012D 06000C            add [__r1],12
+ 0130 5007              mov A,7
+ 0132 08                push A
+ 0133 5100              mov A,[__r1]
+ 0135 08                push A
+ 0136 7C0000            xcall _InitialisationBlock
+ 0139 38FC              add SP,-4
+ 013B                   .dbline 80
+ 013B           ;                                       Flag_ISR_Timer_fast = 0;
+ 013B 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 013E 550000            mov [_Flag_ISR_Timer_fast],0
+ 0141                   .dbline 81
+ 0141           ;                                       break;
+ 0141 8011              xjmp L15
+ 0143           L16:
+ 0143                   .dbline 83
+ 0143           ;                               }
+ 0143           ;                       }
+ 0143           L14:
+ 0143                   .dbline 75
+ 0143 7C0000            xcall _getStart_CamDroite
+ 0146 62D000            mov REG[0xd0],>__r0
+ 0149 3C0000            cmp [__r0],0
+ 014C B006              jnz X5
+ 014E 3C0000            cmp [__r1],0
+ 0151 AFA5              jz L13
+ 0153           X5:
+ 0153           L15:
+ 0153                   .dbline 85
+ 0153           ;                       
+ 0153           ;                       camDroite = ValeurBlockDroit(camDroite) ;               // Récupère les données de la caméra gauche (des 0 si rien n'est détecté)
+ 0153 62D000            mov REG[0xd0],>__r0
+ 0156 5A00              mov [__r1],X
+ 0158 06000C            add [__r1],12
+ 015B 5A00              mov [__r3],X
+ 015D 06002C            add [__r3],44
+ 0160 62D407            mov REG[0xd4],7
+ 0163 62D507            mov REG[0xd5],7
+ 0166 10                push X
+ 0167 570C              mov X,12
+ 0169           X6:
+ 0169 62D000            mov REG[0xd0],>__r0
+ 016C 3E00              mvi A,[__r1]
+ 016E 3F00              mvi [__r3],A
+ 0170 79                dec X
+ 0171 BFF7              jnz X6
+ 0173 20                pop X
+ 0174 5A00              mov [__r1],X
+ 0176 06002C            add [__r1],44
+ 0179 5007              mov A,7
+ 017B 08                push A
+ 017C 5100              mov A,[__r1]
+ 017E 08                push A
+ 017F 5A00              mov [__r1],X
+ 0181 06000C            add [__r1],12
+ 0184 5007              mov A,7
+ 0186 08                push A
+ 0187 5100              mov A,[__r1]
+ 0189 08                push A
+ 018A 7C0000            xcall _ValeurBlockDroit
+ 018D 38FC              add SP,-4
+ 018F                   .dbline 88
+ 018F           ;                       
+ 018F           ;                       // Affichage des données de position des caméras sur le LCD
+ 018F           ;                       affichage(camGauche.signature, camGauche.x, camGauche.y, 
+ 018F 5212              mov A,[X+18]
+ 0191 08                push A
+ 0192 5213              mov A,[X+19]
+ 0194 08                push A
+ 0195 5210              mov A,[X+16]
+ 0197 08                push A
+ 0198 5211              mov A,[X+17]
+ 019A 08                push A
+ 019B 5206              mov A,[X+6]
+ 019D 08                push A
+ 019E 5207              mov A,[X+7]
+ 01A0 08                push A
+ 01A1 5204              mov A,[X+4]
+ 01A3 08                push A
+ 01A4 5205              mov A,[X+5]
+ 01A6 08                push A
+ 01A7 5200              mov A,[X+0]
+ 01A9 08                push A
+ 01AA 5201              mov A,[X+1]
+ 01AC 08                push A
+ 01AD 7C0000            xcall _affichage
+ 01B0                   .dbline 92
+ 01B0           ;                                               camDroite.x, camDroite.y );
+ 01B0           ;                       
+ 01B0           ;                       //Mise en route du balayage
+ 01B0           ;                       i ^= 0x01;
+ 01B0 371901            xor [X+25],1
+ 01B3 371800            xor [X+24],0
+ 01B6                   .dbline 93
+ 01B6           ;                       Motor_Balay(a, pulsewidth_Z, pulsewidth_X, i); 
+ 01B6 5218              mov A,[X+24]
+ 01B8 08                push A
+ 01B9 5219              mov A,[X+25]
+ 01BB 08                push A
+ 01BC 521C              mov A,[X+28]
+ 01BE 08                push A
+ 01BF 521D              mov A,[X+29]
+ 01C1 08                push A
+ 01C2 521A              mov A,[X+26]
+ 01C4 08                push A
+ 01C5 521B              mov A,[X+27]
+ 01C7 08                push A
+ 01C8 521E              mov A,[X+30]
+ 01CA 08                push A
+ 01CB 521F              mov A,[X+31]
+ 01CD 08                push A
+ 01CE 7C0000            xcall _Motor_Balay
+ 01D1 38EE              add SP,-18
+ 01D3                   .dbline 96
+ 01D3           ;                       
+ 01D3           ;                       // Envoie des données vers l'UART (XBee)
+ 01D3           ;                       EnvoiBlock (camGauche);         
+ 01D3 62D000            mov REG[0xd0],>__r0
+ 01D6 5A00              mov [__r1],X
+ 01D8 5A00              mov [__r3],X
+ 01DA 060038            add [__r3],56
+ 01DD 62D407            mov REG[0xd4],7
+ 01E0 62D507            mov REG[0xd5],7
+ 01E3 10                push X
+ 01E4 570C              mov X,12
+ 01E6           X7:
+ 01E6 62D000            mov REG[0xd0],>__r0
+ 01E9 3E00              mvi A,[__r1]
+ 01EB 3F00              mvi [__r3],A
+ 01ED 79                dec X
+ 01EE BFF7              jnz X7
+ 01F0 20                pop X
+ 01F1 5A00              mov [__r1],X
+ 01F3 060038            add [__r1],56
+ 01F6 5007              mov A,7
+ 01F8 08                push A
+ 01F9 5100              mov A,[__r1]
+ 01FB 08                push A
+ 01FC 7C0000            xcall _EnvoiBlock
+ 01FF 38FE              add SP,-2
+ 0201                   .dbline 97
+ 0201           ;                       EnvoiBlock (camDroite);
+ 0201 62D000            mov REG[0xd0],>__r0
+ 0204 5A00              mov [__r1],X
+ 0206 06000C            add [__r1],12
+ 0209 5A00              mov [__r3],X
+ 020B 060044            add [__r3],68
+ 020E 62D407            mov REG[0xd4],7
+ 0211 62D507            mov REG[0xd5],7
+ 0214 10                push X
+ 0215 570C              mov X,12
+ 0217           X8:
+ 0217 62D000            mov REG[0xd0],>__r0
+ 021A 3E00              mvi A,[__r1]
+ 021C 3F00              mvi [__r3],A
+ 021E 79                dec X
+ 021F BFF7              jnz X8
+ 0221 20                pop X
+ 0222 5A00              mov [__r1],X
+ 0224 060044            add [__r1],68
+ 0227 5007              mov A,7
+ 0229 08                push A
+ 022A 5100              mov A,[__r1]
+ 022C 08                push A
+ 022D 7C0000            xcall _EnvoiBlock
+ 0230 38FE              add SP,-2
+ 0232                   .dbline 98
+ 0232           ;                       Flag_ISR_Timer = 0;
+ 0232 62D000            mov REG[0xd0],>_Flag_ISR_Timer
+ 0235 550000            mov [_Flag_ISR_Timer],0
+ 0238                   .dbline 99
+ 0238           ;               }
+ 0238           L6:
+ 0238                   .dbline 100
+ 0238           ;       }
+ 0238           L4:
+ 0238                   .dbline 56
+ 0238 8E1D              xjmp L3
+ 023A           X0:
+ 023A                   .dbline -2
+ 023A           L2:
+ 023A 38B0              add SP,-80
+ 023C 20                pop X
+ 023D                   .dbline 0 ; func end
+ 023D 8FFF              jmp .
+ 023F                   .dbsym l a 30 pI
+ 023F                   .dbsym l pulsewidth_X 28 pI
+ 023F                   .dbsym l pulsewidth_Z 26 pI
+ 023F                   .dbsym l i 24 I
+ 023F                   .dbsym l camDroite 12 S[.1]
+ 023F                   .dbsym l camGauche 0 S[.1]
+ 023F                   .dbend
+ 023F                   .dbfunc e TimerCamera_ISR_C _TimerCamera_ISR_C fV
+ 023F           _TimerCamera_ISR_C::
+ 023F                   .dbline -1
+ 023F 71C0              or F,-64
+ 0241 08                push A
+ 0242 5DD0              mov A,REG[0xd0]
+ 0244 08                push A
+ 0245                   .dbline 108
+ 0245           ;       
+ 0245           ;       return;
+ 0245           ; }
+ 0245           ; 
+ 0245           ; /// Routine d'interruption du timer
+ 0245           ; #pragma interrupt_handler TimerCamera_ISR_C
+ 0245           ; void TimerCamera_ISR_C(void)
+ 0245           ; {
+ 0245                   .dbline 109
+ 0245           ;       count++;
+ 0245 62D000            mov REG[0xd0],>_count
+ 0248 7600              inc [_count]
+ 024A                   .dbline 110
+ 024A           ;       if(count>=3)
+ 024A 3C0003            cmp [_count],3
+ 024D C00D              jc L23
+ 024F           X9:
+ 024F                   .dbline 112
+ 024F           ;       {
+ 024F           ;               count = 0;
+ 024F                   .dbline 112
+ 024F 62D000            mov REG[0xd0],>_count
+ 0252 550000            mov [_count],0
+ 0255                   .dbline 113
+ 0255           ;               Flag_ISR_Timer = 1;     
+ 0255 62D000            mov REG[0xd0],>_Flag_ISR_Timer
+ 0258 550001            mov [_Flag_ISR_Timer],1
+ 025B                   .dbline 114
+ 025B           ;       }
+ 025B           L23:
+ 025B                   .dbline 115
+ 025B           ;       Flag_ISR_Timer_fast = 1;
+ 025B 62D000            mov REG[0xd0],>_Flag_ISR_Timer_fast
+ 025E 550001            mov [_Flag_ISR_Timer_fast],1
+ 0261                   .dbline -2
+ 0261           L22:
+ 0261 18                pop A
+ 0262 60D0              mov REG[208],A
+ 0264 18                pop A
+ 0265                   .dbline 0 ; func end
+ 0265 7E                reti
+ 0266                   .dbend
+                        .area data(ram, con, rel)
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\main.c
+ 0000           _count::
+ 0000 00                .byte 0
+ 0001                   .dbsym e count _count c

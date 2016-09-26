@@ -1,0 +1,556 @@
+ 0000                   cpu LMM
+                        .module affichage.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile ./affichage.c
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\affichage.c
+ 0000                   .dbfunc e affichage _affichage fV
+ 0000           ;         LCDStr -> X+0
+ 0000           ;   y_aff_droite -> X-13
+ 0000           ;   x_aff_droite -> X-11
+ 0000           ;   y_aff_gauche -> X-9
+ 0000           ;   x_aff_gauche -> X-7
+ 0000           ;  signature_aff -> X-5
+ 0000           _affichage::
+ 0000                   .dbline -1
+ 0000 10                push X
+ 0001 4F                mov X,SP
+ 0002 3802              add SP,2
+ 0004                   .dbline 30
+ 0004           ; /**
+ 0004           ;  * \file              affichage.c
+ 0004           ;  * \brief             Fonction d'affichage sur le LCD
+ 0004           ;  * \author            Systendo
+ 0004           ;  * \version   3.5
+ 0004           ;  * \date              23 septembre 2016
+ 0004           ;  */
+ 0004           ; 
+ 0004           ; #include <m8c.h>
+ 0004           ; #include "PSoCAPI.h"
+ 0004           ; #include "affichage.h"
+ 0004           ; #include "const.h"
+ 0004           ; #include <stdio.h>
+ 0004           ; #include <stdlib.h>
+ 0004           ; #include <string.h>
+ 0004           ; 
+ 0004           ; /**
+ 0004           ;  * \void affichage(int signature_aff, int x_aff_gauche, int y_aff_gauche, int x_aff_droite, int y_aff_droite)
+ 0004           ;  * \brief Cette fonction affiche les données propres à l'objet sur le LCD.
+ 0004           ;  *
+ 0004           ;  * \param signature_aff, x_aff_gauche, int y_aff_gauche, x_aff_droite,y_aff_droite contiennent les différentes données de position, de taille et de signature de l'objet détecté.
+ 0004           ;  * \return Aucune donnée n'est retourné
+ 0004           ;  */
+ 0004           ; 
+ 0004           ; void affichage(       int signature_aff, 
+ 0004           ;                               int x_aff_gauche, 
+ 0004           ;                               int y_aff_gauche, 
+ 0004           ;                               int x_aff_droite,
+ 0004           ;                               int y_aff_droite)
+ 0004           ; {
+ 0004                   .dbline 33
+ 0004           ;       char *LCDStr;   
+ 0004           ;       
+ 0004           ;       csprintf(LCDStr, "S:%d", signature_aff);
+ 0004 52FB              mov A,[X-5]
+ 0006 08                push A
+ 0007 52FC              mov A,[X-4]
+ 0009 08                push A
+ 000A 500C              mov A,>L3
+ 000C 08                push A
+ 000D 500C              mov A,<L3
+ 000F 08                push A
+ 0010 5200              mov A,[X+0]
+ 0012 08                push A
+ 0013 5201              mov A,[X+1]
+ 0015 08                push A
+ 0016 7C0000            xcall _csprintf
+ 0019 38FA              add SP,-6
+ 001B                   .dbline 34
+ 001B           ;       LCD_Position(0,0);
+ 001B 10                push X
+ 001C 5000              mov A,0
+ 001E 5700              mov X,0
+ 0020 7C0000            xcall _LCD_Position
+ 0023 20                pop X
+ 0024                   .dbline 35
+ 0024           ;       LCD_PrString(LCDStr);
+ 0024 10                push X
+ 0025 5200              mov A,[X+0]
+ 0027 08                push A
+ 0028 5201              mov A,[X+1]
+ 002A 5C                mov X,A
+ 002B 18                pop A
+ 002C 7C0000            xcall _LCD_PrString
+ 002F 20                pop X
+ 0030                   .dbline 37
+ 0030           ;       
+ 0030           ;       if(signature_aff <= 10) LCD_PrCString(" ");
+ 0030 500A              mov A,10
+ 0032 13FC              sub A,[X-4]
+ 0034 52FB              mov A,[X-5]
+ 0036 3180              xor A,-128
+ 0038 62D000            mov REG[0xd0],>__r0
+ 003B 5300              mov [__rX],A
+ 003D 5080              mov A,(0 ^ 0x80)
+ 003F 1A00              sbb A,[__rX]
+ 0041 C00D              jc L4
+ 0043           X0:
+ 0043                   .dbline 37
+ 0043 10                push X
+ 0044 500A              mov A,>L6
+ 0046 08                push A
+ 0047 500A              mov A,<L6
+ 0049 5C                mov X,A
+ 004A 18                pop A
+ 004B 7C0000            xcall _LCD_PrCString
+ 004E 20                pop X
+ 004F           L4:
+ 004F                   .dbline 38
+ 004F           ;       if(signature_aff <= 100) LCD_PrCString(" ");
+ 004F 5064              mov A,100
+ 0051 13FC              sub A,[X-4]
+ 0053 52FB              mov A,[X-5]
+ 0055 3180              xor A,-128
+ 0057 62D000            mov REG[0xd0],>__r0
+ 005A 5300              mov [__rX],A
+ 005C 5080              mov A,(0 ^ 0x80)
+ 005E 1A00              sbb A,[__rX]
+ 0060 C00D              jc L7
+ 0062           X1:
+ 0062                   .dbline 38
+ 0062 10                push X
+ 0063 500A              mov A,>L6
+ 0065 08                push A
+ 0066 500A              mov A,<L6
+ 0068 5C                mov X,A
+ 0069 18                pop A
+ 006A 7C0000            xcall _LCD_PrCString
+ 006D 20                pop X
+ 006E           L7:
+ 006E                   .dbline 40
+ 006E           ;       
+ 006E           ;       csprintf(LCDStr, "X=%d", x_aff_gauche);
+ 006E 52F9              mov A,[X-7]
+ 0070 08                push A
+ 0071 52FA              mov A,[X-6]
+ 0073 08                push A
+ 0074 5005              mov A,>L9
+ 0076 08                push A
+ 0077 5005              mov A,<L9
+ 0079 08                push A
+ 007A 5200              mov A,[X+0]
+ 007C 08                push A
+ 007D 5201              mov A,[X+1]
+ 007F 08                push A
+ 0080 7C0000            xcall _csprintf
+ 0083 38FA              add SP,-6
+ 0085                   .dbline 41
+ 0085           ;       LCD_Position(0,5);
+ 0085 10                push X
+ 0086 5705              mov X,5
+ 0088 5000              mov A,0
+ 008A 7C0000            xcall _LCD_Position
+ 008D 20                pop X
+ 008E                   .dbline 42
+ 008E           ;       LCD_PrString(LCDStr);
+ 008E 10                push X
+ 008F 5200              mov A,[X+0]
+ 0091 08                push A
+ 0092 5201              mov A,[X+1]
+ 0094 5C                mov X,A
+ 0095 18                pop A
+ 0096 7C0000            xcall _LCD_PrString
+ 0099 20                pop X
+ 009A                   .dbline 44
+ 009A           ; 
+ 009A           ;       if(x_aff_gauche <= 10) LCD_PrCString(" ");
+ 009A 500A              mov A,10
+ 009C 13FA              sub A,[X-6]
+ 009E 52F9              mov A,[X-7]
+ 00A0 3180              xor A,-128
+ 00A2 62D000            mov REG[0xd0],>__r0
+ 00A5 5300              mov [__rX],A
+ 00A7 5080              mov A,(0 ^ 0x80)
+ 00A9 1A00              sbb A,[__rX]
+ 00AB C00D              jc L10
+ 00AD           X2:
+ 00AD                   .dbline 44
+ 00AD 10                push X
+ 00AE 500A              mov A,>L6
+ 00B0 08                push A
+ 00B1 500A              mov A,<L6
+ 00B3 5C                mov X,A
+ 00B4 18                pop A
+ 00B5 7C0000            xcall _LCD_PrCString
+ 00B8 20                pop X
+ 00B9           L10:
+ 00B9                   .dbline 45
+ 00B9           ;       if(x_aff_gauche <= 100) LCD_PrCString(" ");
+ 00B9 5064              mov A,100
+ 00BB 13FA              sub A,[X-6]
+ 00BD 52F9              mov A,[X-7]
+ 00BF 3180              xor A,-128
+ 00C1 62D000            mov REG[0xd0],>__r0
+ 00C4 5300              mov [__rX],A
+ 00C6 5080              mov A,(0 ^ 0x80)
+ 00C8 1A00              sbb A,[__rX]
+ 00CA C00D              jc L12
+ 00CC           X3:
+ 00CC                   .dbline 45
+ 00CC 10                push X
+ 00CD 500A              mov A,>L6
+ 00CF 08                push A
+ 00D0 500A              mov A,<L6
+ 00D2 5C                mov X,A
+ 00D3 18                pop A
+ 00D4 7C0000            xcall _LCD_PrCString
+ 00D7 20                pop X
+ 00D8           L12:
+ 00D8                   .dbline 46
+ 00D8           ;       if(x_aff_gauche <= 1000) LCD_PrCString(" ");
+ 00D8 50E8              mov A,-24
+ 00DA 13FA              sub A,[X-6]
+ 00DC 52F9              mov A,[X-7]
+ 00DE 3180              xor A,-128
+ 00E0 62D000            mov REG[0xd0],>__r0
+ 00E3 5300              mov [__rX],A
+ 00E5 5083              mov A,(3 ^ 0x80)
+ 00E7 1A00              sbb A,[__rX]
+ 00E9 C00D              jc L14
+ 00EB           X4:
+ 00EB                   .dbline 46
+ 00EB 10                push X
+ 00EC 500A              mov A,>L6
+ 00EE 08                push A
+ 00EF 500A              mov A,<L6
+ 00F1 5C                mov X,A
+ 00F2 18                pop A
+ 00F3 7C0000            xcall _LCD_PrCString
+ 00F6 20                pop X
+ 00F7           L14:
+ 00F7                   .dbline 48
+ 00F7           ;       
+ 00F7           ;       csprintf(LCDStr, "Y=%d", y_aff_gauche);
+ 00F7 52F7              mov A,[X-9]
+ 00F9 08                push A
+ 00FA 52F8              mov A,[X-8]
+ 00FC 08                push A
+ 00FD 5000              mov A,>L16
+ 00FF 08                push A
+ 0100 5000              mov A,<L16
+ 0102 08                push A
+ 0103 5200              mov A,[X+0]
+ 0105 08                push A
+ 0106 5201              mov A,[X+1]
+ 0108 08                push A
+ 0109 7C0000            xcall _csprintf
+ 010C 38FA              add SP,-6
+ 010E                   .dbline 49
+ 010E           ;       LCD_Position(0,11);
+ 010E 10                push X
+ 010F 570B              mov X,11
+ 0111 5000              mov A,0
+ 0113 7C0000            xcall _LCD_Position
+ 0116 20                pop X
+ 0117                   .dbline 50
+ 0117           ;       LCD_PrString(LCDStr);
+ 0117 10                push X
+ 0118 5200              mov A,[X+0]
+ 011A 08                push A
+ 011B 5201              mov A,[X+1]
+ 011D 5C                mov X,A
+ 011E 18                pop A
+ 011F 7C0000            xcall _LCD_PrString
+ 0122 20                pop X
+ 0123                   .dbline 52
+ 0123           ; 
+ 0123           ;       if(y_aff_gauche <= 10) LCD_PrCString(" ");
+ 0123 500A              mov A,10
+ 0125 13F8              sub A,[X-8]
+ 0127 52F7              mov A,[X-9]
+ 0129 3180              xor A,-128
+ 012B 62D000            mov REG[0xd0],>__r0
+ 012E 5300              mov [__rX],A
+ 0130 5080              mov A,(0 ^ 0x80)
+ 0132 1A00              sbb A,[__rX]
+ 0134 C00D              jc L17
+ 0136           X5:
+ 0136                   .dbline 52
+ 0136 10                push X
+ 0137 500A              mov A,>L6
+ 0139 08                push A
+ 013A 500A              mov A,<L6
+ 013C 5C                mov X,A
+ 013D 18                pop A
+ 013E 7C0000            xcall _LCD_PrCString
+ 0141 20                pop X
+ 0142           L17:
+ 0142                   .dbline 53
+ 0142           ;       if(y_aff_gauche <= 100) LCD_PrCString(" ");
+ 0142 5064              mov A,100
+ 0144 13F8              sub A,[X-8]
+ 0146 52F7              mov A,[X-9]
+ 0148 3180              xor A,-128
+ 014A 62D000            mov REG[0xd0],>__r0
+ 014D 5300              mov [__rX],A
+ 014F 5080              mov A,(0 ^ 0x80)
+ 0151 1A00              sbb A,[__rX]
+ 0153 C00D              jc L19
+ 0155           X6:
+ 0155                   .dbline 53
+ 0155 10                push X
+ 0156 500A              mov A,>L6
+ 0158 08                push A
+ 0159 500A              mov A,<L6
+ 015B 5C                mov X,A
+ 015C 18                pop A
+ 015D 7C0000            xcall _LCD_PrCString
+ 0160 20                pop X
+ 0161           L19:
+ 0161                   .dbline 54
+ 0161           ;       if(y_aff_gauche <= 1000) LCD_PrCString(" ");
+ 0161 50E8              mov A,-24
+ 0163 13F8              sub A,[X-8]
+ 0165 52F7              mov A,[X-9]
+ 0167 3180              xor A,-128
+ 0169 62D000            mov REG[0xd0],>__r0
+ 016C 5300              mov [__rX],A
+ 016E 5083              mov A,(3 ^ 0x80)
+ 0170 1A00              sbb A,[__rX]
+ 0172 C00D              jc L21
+ 0174           X7:
+ 0174                   .dbline 54
+ 0174 10                push X
+ 0175 500A              mov A,>L6
+ 0177 08                push A
+ 0178 500A              mov A,<L6
+ 017A 5C                mov X,A
+ 017B 18                pop A
+ 017C 7C0000            xcall _LCD_PrCString
+ 017F 20                pop X
+ 0180           L21:
+ 0180                   .dbline 56
+ 0180           ;       
+ 0180           ;       csprintf(LCDStr, "X=%d", x_aff_droite);
+ 0180 52F5              mov A,[X-11]
+ 0182 08                push A
+ 0183 52F6              mov A,[X-10]
+ 0185 08                push A
+ 0186 5005              mov A,>L9
+ 0188 08                push A
+ 0189 5005              mov A,<L9
+ 018B 08                push A
+ 018C 5200              mov A,[X+0]
+ 018E 08                push A
+ 018F 5201              mov A,[X+1]
+ 0191 08                push A
+ 0192 7C0000            xcall _csprintf
+ 0195 38FA              add SP,-6
+ 0197                   .dbline 57
+ 0197           ;       LCD_Position(1,5);
+ 0197 10                push X
+ 0198 5705              mov X,5
+ 019A 5001              mov A,1
+ 019C 7C0000            xcall _LCD_Position
+ 019F 20                pop X
+ 01A0                   .dbline 58
+ 01A0           ;       LCD_PrString(LCDStr);
+ 01A0 10                push X
+ 01A1 5200              mov A,[X+0]
+ 01A3 08                push A
+ 01A4 5201              mov A,[X+1]
+ 01A6 5C                mov X,A
+ 01A7 18                pop A
+ 01A8 7C0000            xcall _LCD_PrString
+ 01AB 20                pop X
+ 01AC                   .dbline 60
+ 01AC           ;       
+ 01AC           ;       if(x_aff_droite <= 10) LCD_PrCString(" ");
+ 01AC 500A              mov A,10
+ 01AE 13F6              sub A,[X-10]
+ 01B0 52F5              mov A,[X-11]
+ 01B2 3180              xor A,-128
+ 01B4 62D000            mov REG[0xd0],>__r0
+ 01B7 5300              mov [__rX],A
+ 01B9 5080              mov A,(0 ^ 0x80)
+ 01BB 1A00              sbb A,[__rX]
+ 01BD C00D              jc L23
+ 01BF           X8:
+ 01BF                   .dbline 60
+ 01BF 10                push X
+ 01C0 500A              mov A,>L6
+ 01C2 08                push A
+ 01C3 500A              mov A,<L6
+ 01C5 5C                mov X,A
+ 01C6 18                pop A
+ 01C7 7C0000            xcall _LCD_PrCString
+ 01CA 20                pop X
+ 01CB           L23:
+ 01CB                   .dbline 61
+ 01CB           ;       if(x_aff_droite <= 100) LCD_PrCString(" ");
+ 01CB 5064              mov A,100
+ 01CD 13F6              sub A,[X-10]
+ 01CF 52F5              mov A,[X-11]
+ 01D1 3180              xor A,-128
+ 01D3 62D000            mov REG[0xd0],>__r0
+ 01D6 5300              mov [__rX],A
+ 01D8 5080              mov A,(0 ^ 0x80)
+ 01DA 1A00              sbb A,[__rX]
+ 01DC C00D              jc L25
+ 01DE           X9:
+ 01DE                   .dbline 61
+ 01DE 10                push X
+ 01DF 500A              mov A,>L6
+ 01E1 08                push A
+ 01E2 500A              mov A,<L6
+ 01E4 5C                mov X,A
+ 01E5 18                pop A
+ 01E6 7C0000            xcall _LCD_PrCString
+ 01E9 20                pop X
+ 01EA           L25:
+ 01EA                   .dbline 62
+ 01EA           ;       if(x_aff_droite <= 1000) LCD_PrCString(" ");
+ 01EA 50E8              mov A,-24
+ 01EC 13F6              sub A,[X-10]
+ 01EE 52F5              mov A,[X-11]
+ 01F0 3180              xor A,-128
+ 01F2 62D000            mov REG[0xd0],>__r0
+ 01F5 5300              mov [__rX],A
+ 01F7 5083              mov A,(3 ^ 0x80)
+ 01F9 1A00              sbb A,[__rX]
+ 01FB C00D              jc L27
+ 01FD           X10:
+ 01FD                   .dbline 62
+ 01FD 10                push X
+ 01FE 500A              mov A,>L6
+ 0200 08                push A
+ 0201 500A              mov A,<L6
+ 0203 5C                mov X,A
+ 0204 18                pop A
+ 0205 7C0000            xcall _LCD_PrCString
+ 0208 20                pop X
+ 0209           L27:
+ 0209                   .dbline 64
+ 0209           ;       
+ 0209           ;       csprintf(LCDStr, "Y=%d", y_aff_droite);
+ 0209 52F3              mov A,[X-13]
+ 020B 08                push A
+ 020C 52F4              mov A,[X-12]
+ 020E 08                push A
+ 020F 5000              mov A,>L16
+ 0211 08                push A
+ 0212 5000              mov A,<L16
+ 0214 08                push A
+ 0215 5200              mov A,[X+0]
+ 0217 08                push A
+ 0218 5201              mov A,[X+1]
+ 021A 08                push A
+ 021B 7C0000            xcall _csprintf
+ 021E 38FA              add SP,-6
+ 0220                   .dbline 65
+ 0220           ;       LCD_Position(1,11);
+ 0220 10                push X
+ 0221 570B              mov X,11
+ 0223 5001              mov A,1
+ 0225 7C0000            xcall _LCD_Position
+ 0228 20                pop X
+ 0229                   .dbline 66
+ 0229           ;       LCD_PrString(LCDStr);                   
+ 0229 10                push X
+ 022A 5200              mov A,[X+0]
+ 022C 08                push A
+ 022D 5201              mov A,[X+1]
+ 022F 5C                mov X,A
+ 0230 18                pop A
+ 0231 7C0000            xcall _LCD_PrString
+ 0234 20                pop X
+ 0235                   .dbline 68
+ 0235           ; 
+ 0235           ;       if(y_aff_droite <= 10) LCD_PrCString(" ");
+ 0235 500A              mov A,10
+ 0237 13F4              sub A,[X-12]
+ 0239 52F3              mov A,[X-13]
+ 023B 3180              xor A,-128
+ 023D 62D000            mov REG[0xd0],>__r0
+ 0240 5300              mov [__rX],A
+ 0242 5080              mov A,(0 ^ 0x80)
+ 0244 1A00              sbb A,[__rX]
+ 0246 C00D              jc L29
+ 0248           X11:
+ 0248                   .dbline 68
+ 0248 10                push X
+ 0249 500A              mov A,>L6
+ 024B 08                push A
+ 024C 500A              mov A,<L6
+ 024E 5C                mov X,A
+ 024F 18                pop A
+ 0250 7C0000            xcall _LCD_PrCString
+ 0253 20                pop X
+ 0254           L29:
+ 0254                   .dbline 69
+ 0254           ;       if(y_aff_droite <= 100) LCD_PrCString(" ");
+ 0254 5064              mov A,100
+ 0256 13F4              sub A,[X-12]
+ 0258 52F3              mov A,[X-13]
+ 025A 3180              xor A,-128
+ 025C 62D000            mov REG[0xd0],>__r0
+ 025F 5300              mov [__rX],A
+ 0261 5080              mov A,(0 ^ 0x80)
+ 0263 1A00              sbb A,[__rX]
+ 0265 C00D              jc L31
+ 0267           X12:
+ 0267                   .dbline 69
+ 0267 10                push X
+ 0268 500A              mov A,>L6
+ 026A 08                push A
+ 026B 500A              mov A,<L6
+ 026D 5C                mov X,A
+ 026E 18                pop A
+ 026F 7C0000            xcall _LCD_PrCString
+ 0272 20                pop X
+ 0273           L31:
+ 0273                   .dbline 70
+ 0273           ;       if(y_aff_droite <= 1000) LCD_PrCString(" ");
+ 0273 50E8              mov A,-24
+ 0275 13F4              sub A,[X-12]
+ 0277 52F3              mov A,[X-13]
+ 0279 3180              xor A,-128
+ 027B 62D000            mov REG[0xd0],>__r0
+ 027E 5300              mov [__rX],A
+ 0280 5083              mov A,(3 ^ 0x80)
+ 0282 1A00              sbb A,[__rX]
+ 0284 C00D              jc L2
+ 0286           X13:
+ 0286                   .dbline 70
+ 0286 10                push X
+ 0287 500A              mov A,>L6
+ 0289 08                push A
+ 028A 500A              mov A,<L6
+ 028C 5C                mov X,A
+ 028D 18                pop A
+ 028E 7C0000            xcall _LCD_PrCString
+ 0291 20                pop X
+ 0292                   .dbline 72
+ 0292           ;       
+ 0292           ;       return;
+ 0292                   .dbline -2
+ 0292           L2:
+ 0292 38FE              add SP,-2
+ 0294 20                pop X
+ 0295                   .dbline 0 ; func end
+ 0295 7F                ret
+ 0296                   .dbsym l LCDStr 0 pc
+ 0296                   .dbsym l y_aff_droite -13 I
+ 0296                   .dbsym l x_aff_droite -11 I
+ 0296                   .dbsym l y_aff_gauche -9 I
+ 0296                   .dbsym l x_aff_gauche -7 I
+ 0296                   .dbsym l signature_aff -5 I
+ 0296                   .dbend
+                        .area lit(rom, con, rel, lit)
+ 0000           L16:
+ 0000 593D256400        .byte 'Y,61,37,'d,0
+ 0005           L9:
+ 0005 583D256400        .byte 'X,61,37,'d,0
+ 000A           L6:
+ 000A 2000              .byte 32,0
+ 000C           L3:
+ 000C 533A256400        .byte 'S,58,37,'d,0

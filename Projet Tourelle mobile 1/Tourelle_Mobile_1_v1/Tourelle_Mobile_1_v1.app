@@ -1,0 +1,5 @@
+<PSOC_DB>
+  <PSOC_PROJECT_LIST>
+    <PSOC_PROJECT PATH="\Tourelle_Mobile_1_v1.cmx" IS_ACTIVE="TRUE" />
+  </PSOC_PROJECT_LIST>
+</PSOC_DB>

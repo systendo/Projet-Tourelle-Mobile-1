@@ -1,0 +1,292 @@
+ 0000                   cpu LMM
+                        .module camgauche.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile ./camgauche.c
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\camgauche.c
+ 0000                   .dbfunc e getByte_CamGauche _getByte_CamGauche fc
+ 0000           ;      Data_Read -> X+0
+ 0000           ;            out -> X-4
+ 0000           _getByte_CamGauche::
+ 0000                   .dbline -1
+ 0000 10                push X
+ 0001 4F                mov X,SP
+ 0002 3801              add SP,1
+ 0004                   .dbline 23
+ 0004           ; /**
+ 0004           ;  * \file              camgauche.c
+ 0004           ;  * \brief             Fonctions utilisant le SPIM lié à la caméra gauche
+ 0004           ;  * \author            Systendo
+ 0004           ;  * \version   3.5
+ 0004           ;  * \date              23 septembre 2016
+ 0004           ;  */
+ 0004           ; 
+ 0004           ; #include <m8c.h>
+ 0004           ; #include "PSoCAPI.h"
+ 0004           ; #include "camgauche.h"
+ 0004           ; #include "const.h"
+ 0004           ; 
+ 0004           ; /**
+ 0004           ;  * \fn                static BYTE getByte_CamGauche(char out)
+ 0004           ;  * \brief     Fonction d'envoi et de réception de 8 bits de data entre la PixyCam de gauche et le Psoc.
+ 0004           ;  *
+ 0004           ;  * \param     out qui contient les 8 bits de data à envoyer à la PixyCam de gauche.
+ 0004           ;  * \return    Data_Read qui contient les 8 bits de data envoyés par la PixyCam de gauche.
+ 0004           ;  */
+ 0004           ; 
+ 0004           ; BYTE getByte_CamGauche(char out)
+ 0004           ; {
+ 0004                   .dbline 24
+ 0004           ;       char Data_Read = 0;
+ 0004 560000            mov [X+0],0
+ 0007                   .dbline 25
+ 0007           ;       SPIM_CamGauche_SendTxData(out);
+ 0007 10                push X
+ 0008 52FC              mov A,[X-4]
+ 000A 7C0000            xcall _SPIM_CamGauche_SendTxData
+ 000D 20                pop X
+ 000E           L3:
+ 000E                   .dbline 26
+ 000E           ;       while (!(SPIM_CamGauche_bReadStatus() && SPIM_CamGauche_SPIM_SPI_COMPLETE)){};
+ 000E                   .dbline 26
+ 000E           L4:
+ 000E                   .dbline 26
+ 000E 10                push X
+ 000F 7C0000            xcall _SPIM_CamGauche_bReadStatus
+ 0012 20                pop X
+ 0013 62D000            mov REG[0xd0],>__r0
+ 0016 3900              cmp A,0
+ 0018 AFF5              jz L3
+ 001A                   .dbline 26
+ 001A                   .dbline 27
+ 001A           ;       Data_Read = SPIM_CamGauche_bReadRxData();
+ 001A 10                push X
+ 001B 7C0000            xcall _SPIM_CamGauche_bReadRxData
+ 001E 20                pop X
+ 001F 62D000            mov REG[0xd0],>__r0
+ 0022 5400              mov [X+0],A
+ 0024                   .dbline 28
+ 0024           ;       return (Data_Read);
+ 0024 5200              mov A,[X+0]
+ 0026                   .dbline -2
+ 0026           L2:
+ 0026 38FF              add SP,-1
+ 0028 20                pop X
+ 0029                   .dbline 0 ; func end
+ 0029 7F                ret
+ 002A                   .dbsym l Data_Read 0 c
+ 002A                   .dbsym l out -4 c
+ 002A                   .dbend
+ 002A                   .dbfunc e getWord_CamGauche _getWord_CamGauche fI
+ 002A           ;           cout -> X+3
+ 002A           ;              c -> X+2
+ 002A           ;              w -> X+0
+ 002A           _getWord_CamGauche::
+ 002A                   .dbline -1
+ 002A 10                push X
+ 002B 4F                mov X,SP
+ 002C 3804              add SP,4
+ 002E                   .dbline 40
+ 002E           ; }
+ 002E           ; 
+ 002E           ; /**
+ 002E           ;  * \fn                static short getWord_CamGauche(void)
+ 002E           ;  * \brief     Fonction qui réceptionne deux datas sur 8bits provenant de la PixyCam de gauche et les fusionne pour retourner une data de 16 bits.
+ 002E           ;  *            L'ordre d'envoi des octets est en big endian donc pas d'inversion nécessaire.
+ 002E           ;  * \param     aucun paramètre en entrée.
+ 002E           ;  * \return    w qui contient 16 bits de donnée provenant de la PixyCam de gauche.
+ 002E           ;  */
+ 002E           ; 
+ 002E           ; int getWord_CamGauche(void)
+ 002E           ; { 
+ 002E                   .dbline 42
+ 002E           ;       int w;
+ 002E           ;       char c, cout = 0;
+ 002E 560300            mov [X+3],0
+ 0031                   .dbline 44
+ 0031           ; 
+ 0031           ;       w = getByte_CamGauche(PIXY_SYNC_BYTE); /// envoie un BYTE de synchronisation 
+ 0031 505A              mov A,90
+ 0033 08                push A
+ 0034 9FCA              xcall _getByte_CamGauche
+ 0036 62D000            mov REG[0xd0],>__r0
+ 0039 5401              mov [X+1],A
+ 003B 560000            mov [X+0],0
+ 003E                   .dbline 46
+ 003E           ; 
+ 003E           ;       w <<= 8;
+ 003E 5201              mov A,[X+1]
+ 0040 5400              mov [X+0],A
+ 0042 560100            mov [X+1],0
+ 0045                   .dbline 47
+ 0045           ;       c = getByte_CamGauche(cout);               /// envoie un BYTE de data 
+ 0045 5203              mov A,[X+3]
+ 0047 08                push A
+ 0048 9FB6              xcall _getByte_CamGauche
+ 004A 38FE              add SP,-2
+ 004C 62D000            mov REG[0xd0],>__r0
+ 004F 5402              mov [X+2],A
+ 0051                   .dbline 48
+ 0051           ;       w |= c;
+ 0051 5202              mov A,[X+2]
+ 0053 2D01              or [X+1],A
+ 0055                   .dbline 50
+ 0055           ; 
+ 0055           ;       return w;
+ 0055 5201              mov A,[X+1]
+ 0057 5300              mov [__r1],A
+ 0059 5200              mov A,[X+0]
+ 005B 5300              mov [__r0],A
+ 005D                   .dbline -2
+ 005D           L6:
+ 005D 38FC              add SP,-4
+ 005F 20                pop X
+ 0060                   .dbline 0 ; func end
+ 0060 7F                ret
+ 0061                   .dbsym l cout 3 c
+ 0061                   .dbsym l c 2 c
+ 0061                   .dbsym l w 0 I
+ 0061                   .dbend
+ 0061                   .dbfunc e getStart_CamGauche _getStart_CamGauche fI
+ 0061           ;          lastw -> X+2
+ 0061           ;              w -> X+0
+ 0061           _getStart_CamGauche::
+ 0061                   .dbline -1
+ 0061 10                push X
+ 0062 4F                mov X,SP
+ 0063 3804              add SP,4
+ 0065                   .dbline 64
+ 0065           ; }
+ 0065           ; 
+ 0065           ; /**
+ 0065           ;  * \fn                int getStart_CamGauche(void)
+ 0065           ;  * \brief     Fonction qui détecte le début de la transmission d'une série de données par la PixyCam de gauche.
+ 0065           ;  *                    Le début d'une série de données est indiqué par l'envoi de deux bytes pouvant prendre les valeurs aa55 ou aa56.
+ 0065           ;  *                    La combinaison obtenue annonce le type de donnée qui va être transmise ( aa55 aa55 : Normal et aa55 aa56 : Couleur)
+ 0065           ;  *
+ 0065           ;  * \param     aucun paramètre en entrée.
+ 0065           ;  * \return    1 si des mots de départ sont reçus, retourne 0 sinon.
+ 0065           ;  */
+ 0065           ; 
+ 0065           ; int getStart_CamGauche(void)
+ 0065           ; {
+ 0065                   .dbline 67
+ 0065           ;       int w, lastw;
+ 0065           ; 
+ 0065           ;       lastw = 0xffff;
+ 0065 5603FF            mov [X+3],-1
+ 0068 5602FF            mov [X+2],-1
+ 006B 8087              xjmp L9
+ 006D           L8:
+ 006D                   .dbline 70
+ 006D           ; 
+ 006D           ;       while(1)
+ 006D           ;       {
+ 006D                   .dbline 71
+ 006D           ;               w = getWord_CamGauche();
+ 006D 9FBB              xcall _getWord_CamGauche
+ 006F 62D000            mov REG[0xd0],>__r0
+ 0072 5100              mov A,[__r1]
+ 0074 5401              mov [X+1],A
+ 0076 5100              mov A,[__r0]
+ 0078 5400              mov [X+0],A
+ 007A                   .dbline 73
+ 007A           ;               
+ 007A           ;               if (w==0 && lastw==0)
+ 007A 3D0000            cmp [X+0],0
+ 007D B01B              jnz L11
+ 007F 3D0100            cmp [X+1],0
+ 0082 B016              jnz L11
+ 0084           X1:
+ 0084 3D0200            cmp [X+2],0
+ 0087 B011              jnz L11
+ 0089 3D0300            cmp [X+3],0
+ 008C B00C              jnz L11
+ 008E           X2:
+ 008E                   .dbline 74
+ 008E           ;                 return 0;                                                                                      /// Pas de mot de départ
+ 008E 62D000            mov REG[0xd0],>__r0
+ 0091 550000            mov [__r1],0
+ 0094 550000            mov [__r0],0
+ 0097 805D              xjmp L7
+ 0099           L11:
+ 0099                   .dbline 75
+ 0099           ;               else if (w==PIXY_START_WORD && lastw==PIXY_START_WORD)
+ 0099 3D00AA            cmp [X+0],-86
+ 009C B01B              jnz L13
+ 009E 3D0155            cmp [X+1],85
+ 00A1 B016              jnz L13
+ 00A3           X3:
+ 00A3 3D02AA            cmp [X+2],-86
+ 00A6 B011              jnz L13
+ 00A8 3D0355            cmp [X+3],85
+ 00AB B00C              jnz L13
+ 00AD           X4:
+ 00AD                   .dbline 77
+ 00AD           ;               {
+ 00AD           ;                       return 1;                                                                                        /// Mots de départ trouvés, aa55 et aa55 : annonce la transmission de données normales
+ 00AD                   .dbline 77
+ 00AD 62D000            mov REG[0xd0],>__r0
+ 00B0 550001            mov [__r1],1
+ 00B3 550000            mov [__r0],0
+ 00B6 803E              xjmp L7
+ 00B8           L13:
+ 00B8                   .dbline 79
+ 00B8           ;               }
+ 00B8           ;               else if (w==PIXY_START_WORD_CC && lastw==PIXY_START_WORD)/// Mots de départ aa55 aa56 trouvés : annonce la transmission de données couleurs
+ 00B8 3D00AA            cmp [X+0],-86
+ 00BB B01B              jnz L15
+ 00BD 3D0156            cmp [X+1],86
+ 00C0 B016              jnz L15
+ 00C2           X5:
+ 00C2 3D02AA            cmp [X+2],-86
+ 00C5 B011              jnz L15
+ 00C7 3D0355            cmp [X+3],85
+ 00CA B00C              jnz L15
+ 00CC           X6:
+ 00CC                   .dbline 81
+ 00CC           ;               {                                                        
+ 00CC           ;                       return 1;
+ 00CC                   .dbline 81
+ 00CC 62D000            mov REG[0xd0],>__r0
+ 00CF 550001            mov [__r1],1
+ 00D2 550000            mov [__r0],0
+ 00D5 801F              xjmp L7
+ 00D7           L15:
+ 00D7                   .dbline 84
+ 00D7           ;               }    
+ 00D7           ;       
+ 00D7           ;       else if (w==PIXY_START_WORDX) getByte_CamGauche(0);              /// On est plus synchronisé, renvoie 0 
+ 00D7 3D0055            cmp [X+0],85
+ 00DA B010              jnz L17
+ 00DC 3D01AA            cmp [X+1],-86
+ 00DF B00B              jnz L17
+ 00E1           X7:
+ 00E1                   .dbline 84
+ 00E1 5000              mov A,0
+ 00E3 08                push A
+ 00E4 9F1A              xcall _getByte_CamGauche
+ 00E6 38FF              add SP,-1
+ 00E8 62D000            mov REG[0xd0],>__r0
+ 00EB           L17:
+ 00EB                   .dbline 86
+ 00EB           ;       
+ 00EB           ;       lastw = w; 
+ 00EB 5201              mov A,[X+1]
+ 00ED 5403              mov [X+3],A
+ 00EF 5200              mov A,[X+0]
+ 00F1 5402              mov [X+2],A
+ 00F3                   .dbline 87
+ 00F3           ;       }
+ 00F3           L9:
+ 00F3                   .dbline 69
+ 00F3 8F79              xjmp L8
+ 00F5           X0:
+ 00F5                   .dbline -2
+ 00F5           L7:
+ 00F5 38FC              add SP,-4
+ 00F7 20                pop X
+ 00F8                   .dbline 0 ; func end
+ 00F8 7F                ret
+ 00F9                   .dbsym l lastw 2 I
+ 00F9                   .dbsym l w 0 I
+ 00F9                   .dbend

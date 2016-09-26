@@ -1,0 +1,106 @@
+XH
+H 1 areas 8 global symbols
+M camdroite.c
+S _SPIM_CamDroite_bReadStatus Ref0000
+S __r0 Ref0000
+S __r1 Ref0000
+S _SPIM_CamDroite_SendTxData Ref0000
+S _SPIM_CamDroite_bReadRxData Ref0000
+A text size F9 flags 0
+dbfile ./camdroite.c
+dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\camdroite.c
+dbfunc e getByte_CamDroite 0 fc
+dbsym l Data_Read 0 c
+dbsym l out FFFFFFFC c
+dbline FFFFFFFF 0
+dbline 17 4
+dbline 18 4
+dbline 19 7
+dbline 1A E
+dbline 1A E
+dbline 1A E
+dbline 1A 1A
+dbline 1B 1A
+dbline 1C 24
+dbline FFFFFFFE 26
+dbline 0 29
+dbfunc e getWord_CamDroite 2A fI
+dbsym l cout 3 c
+dbsym l c 2 c
+dbsym l w 0 I
+dbline FFFFFFFF 2A
+dbline 29 2E
+dbline 2B 2E
+dbline 2D 31
+dbline 2F 3E
+dbline 30 45
+dbline 31 51
+dbline 33 55
+dbline FFFFFFFE 5D
+dbline 0 60
+dbfunc e getStart_CamDroite 61 fI
+dbsym l lastw 2 I
+dbsym l w 0 I
+dbline FFFFFFFF 61
+dbline 40 65
+dbline 43 65
+dbline 46 6D
+dbline 47 6D
+dbline 49 7A
+dbline 49 8E
+dbline 4A 99
+dbline 4C AD
+dbline 4C AD
+dbline 4E B8
+dbline 50 CC
+dbline 50 CC
+dbline 53 D7
+dbline 53 E1
+dbline 55 EB
+dbline 56 F3
+dbline 45 F3
+dbline FFFFFFFE F5
+dbline 0 F8
+S _getByte_CamDroite Def0000
+S _getWord_CamDroite Def002A
+S _getStart_CamDroite Def0061
+T 00 00 10 4F 38 01 56 00 00 10 52 FC 7C 00 00 20
+R 00 00 00 00 02 0D 00 03
+T 00 0E 10 7C 00 00 20 62 D0 00 00 39 00 AF F5 10
+R 00 00 00 00 02 04 00 00 43 09 00 01
+T 00 1B 7C 00 00 20 62 D0 00 00 54 00 52 00 38 FF
+R 00 00 00 00 02 03 00 04 43 08 00 01
+T 00 28 20 7F 10 4F 38 04 56 03 00 50 5A 08 9F CA
+R 00 00 00 00
+T 00 36 62 D0 00 00 54 01 56 00 00 52 01 54 00 56
+R 00 00 00 00 43 04 00 01
+T 00 43 01 00 52 03 08 9F B6 38 FE 62 D0 00 00 54
+R 00 00 00 00 43 0D 00 01
+T 00 50 02 52 02 2D 01 52 01 53 00 00 52 00 53
+R 00 00 00 00 03 0A 00 02
+T 00 5C 00 00 38 FC 20 7F 10 4F 38 04 56 03 FF 56
+R 00 00 00 00 03 02 00 01
+T 00 69 02 FF 80 87 9F BB 62 D0 00 00 51 00 00 54
+R 00 00 00 00 43 0A 00 01 03 0D 00 02
+T 00 75 01 51 00 00 54 00 3D 00 00 B0 1B 3D 01 00
+R 00 00 00 00 03 04 00 01
+T 00 82 B0 16 3D 02 00 B0 11 3D 03 00 B0 0C 62 D0
+R 00 00 00 00
+T 00 90 00 00 55 00 00 00 55 00 00 00 80 5D 3D 00
+R 00 00 00 00 43 02 00 01 03 05 00 02 03 09 00 01
+T 00 9B AA B0 1B 3D 01 55 B0 16 3D 02 AA B0 11 3D
+R 00 00 00 00
+T 00 A9 03 55 B0 0C 62 D0 00 00 55 00 00 01 55
+R 00 00 00 00 43 08 00 01 03 0B 00 02
+T 00 B4 00 00 00 80 3E 3D 00 AA B0 1B 3D 01 56 B0
+R 00 00 00 00 03 02 00 01
+T 00 C1 16 3D 02 AA B0 11 3D 03 55 B0 0C 62 D0
+R 00 00 00 00
+T 00 CE 00 00 55 00 00 01 55 00 00 00 80 1F 3D 00
+R 00 00 00 00 43 02 00 01 03 05 00 02 03 09 00 01
+T 00 D9 55 B0 10 3D 01 AA B0 0B 50 00 08 9F 1A 38
+R 00 00 00 00
+T 00 E7 FF 62 D0 00 00 52 01 54 03 52 00 54 02 8F
+R 00 00 00 00 43 05 00 01
+T 00 F4 79 38 FC 20 7F
+R 00 00 00 00

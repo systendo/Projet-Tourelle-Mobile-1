@@ -1,0 +1,510 @@
+ 0000                   cpu LMM
+                        .module initialisationblock.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile ./initialisationblock.c
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\initialisationblock.c
+ 0000                   .dbstruct 0 12 .1
+ 0000                   .dbfield 0 signature I
+ 0000                   .dbfield 2 checksum I
+ 0000                   .dbfield 4 x I
+ 0000                   .dbfield 6 y I
+ 0000                   .dbfield 8 width I
+ 0000                   .dbfield 10 height I
+ 0000                   .dbend
+ 0000                   .dbfunc e InitialisationBlock _InitialisationBlock fS[.1]
+ 0000           ;          block -> X-7
+ 0000           _InitialisationBlock::
+ 0000                   .dbline -1
+ 0000 10                push X
+ 0001 4F                mov X,SP
+ 0002                   .dbline 14
+ 0002           ; #include <m8c.h>
+ 0002           ; #include "PSoCAPI.h"
+ 0002           ; #include "const.h"
+ 0002           ; #include "camgauche.h"
+ 0002           ; #include "camdroite.h"
+ 0002           ; 
+ 0002           ; /**
+ 0002           ;  * \fn                Block InitialisationBlock(Block block)
+ 0002           ;  * \brief     Initialise les différentes variables d'une structure Block à 0.
+ 0002           ;  * \param     block est la structure Block à initialiser
+ 0002           ;  * \return    Retourne le Block modifié
+ 0002           ;  */
+ 0002           ; 
+ 0002           ; Block InitialisationBlock(Block block){
+ 0002                   .dbline 15
+ 0002           ;       block.checksum = 0;
+ 0002 62D000            mov REG[0xd0],>__r0
+ 0005 52FA              mov A,[X-6]
+ 0007 0102              add A,2
+ 0009 5300              mov [__r1],A
+ 000B 52F9              mov A,[X-7]
+ 000D 0900              adc A,0
+ 000F 60D5              mov REG[0xd5],A
+ 0011 5000              mov A,0
+ 0013 3F00              mvi [__r1],A
+ 0015 3F00              mvi [__r1],A
+ 0017                   .dbline 16
+ 0017           ;       block.signature = 0;
+ 0017 52FA              mov A,[X-6]
+ 0019 5300              mov [__r1],A
+ 001B 52F9              mov A,[X-7]
+ 001D 60D5              mov REG[0xd5],A
+ 001F 5000              mov A,0
+ 0021 3F00              mvi [__r1],A
+ 0023 3F00              mvi [__r1],A
+ 0025                   .dbline 17
+ 0025           ;       block.x = 0;
+ 0025 52FA              mov A,[X-6]
+ 0027 0104              add A,4
+ 0029 5300              mov [__r1],A
+ 002B 52F9              mov A,[X-7]
+ 002D 0900              adc A,0
+ 002F 60D5              mov REG[0xd5],A
+ 0031 5000              mov A,0
+ 0033 3F00              mvi [__r1],A
+ 0035 3F00              mvi [__r1],A
+ 0037                   .dbline 18
+ 0037           ;       block.y = 0;
+ 0037 52FA              mov A,[X-6]
+ 0039 0106              add A,6
+ 003B 5300              mov [__r1],A
+ 003D 52F9              mov A,[X-7]
+ 003F 0900              adc A,0
+ 0041 60D5              mov REG[0xd5],A
+ 0043 5000              mov A,0
+ 0045 3F00              mvi [__r1],A
+ 0047 3F00              mvi [__r1],A
+ 0049                   .dbline 19
+ 0049           ;       block.width = 0;
+ 0049 52FA              mov A,[X-6]
+ 004B 0108              add A,8
+ 004D 5300              mov [__r1],A
+ 004F 52F9              mov A,[X-7]
+ 0051 0900              adc A,0
+ 0053 60D5              mov REG[0xd5],A
+ 0055 5000              mov A,0
+ 0057 3F00              mvi [__r1],A
+ 0059 3F00              mvi [__r1],A
+ 005B                   .dbline 20
+ 005B           ;       block.height = 0;
+ 005B 52FA              mov A,[X-6]
+ 005D 010A              add A,10
+ 005F 5300              mov [__r1],A
+ 0061 52F9              mov A,[X-7]
+ 0063 0900              adc A,0
+ 0065 60D5              mov REG[0xd5],A
+ 0067 5000              mov A,0
+ 0069 3F00              mvi [__r1],A
+ 006B 3F00              mvi [__r1],A
+ 006D                   .dbline 21
+ 006D           ;       return (block) ;
+ 006D 52FA              mov A,[X-6]
+ 006F 5300              mov [__r1],A
+ 0071 52F9              mov A,[X-7]
+ 0073 5300              mov [__r0],A
+ 0075 52FC              mov A,[X-4]
+ 0077 5300              mov [__r3],A
+ 0079 52FB              mov A,[X-5]
+ 007B 5300              mov [__r2],A
+ 007D 5100              mov A,[__r0]
+ 007F 60D4              mov REG[0xd4],A
+ 0081 5100              mov A,[__r2]
+ 0083 60D5              mov REG[0xd5],A
+ 0085 10                push X
+ 0086 570C              mov X,12
+ 0088           X0:
+ 0088 62D000            mov REG[0xd0],>__r0
+ 008B 3E00              mvi A,[__r1]
+ 008D 3F00              mvi [__r3],A
+ 008F 79                dec X
+ 0090 BFF7              jnz X0
+ 0092 20                pop X
+ 0093                   .dbline -2
+ 0093           L2:
+ 0093 20                pop X
+ 0094                   .dbline 0 ; func end
+ 0094 7F                ret
+ 0095                   .dbsym l block -7 pS[.1]
+ 0095                   .dbend
+ 0095                   .dbfunc e ValeurBlockDroit _ValeurBlockDroit fS[.1]
+ 0095           ;          block -> X-7
+ 0095           _ValeurBlockDroit::
+ 0095                   .dbline -1
+ 0095 10                push X
+ 0096 4F                mov X,SP
+ 0097                   .dbline 31
+ 0097           ; }     
+ 0097           ; 
+ 0097           ; /**
+ 0097           ;  * \fn                Block ValeurBlockDroit(void)
+ 0097           ;  * \brief     Fonction qui retourne une structure Block contenant les données envoyées par la PixyCam de droite.
+ 0097           ;  * \param     block est la structure Block contenant les données de la caméra droite
+ 0097           ;  * \return    block est une structure Block contenant les données envoyées par la PixyCam de droite.
+ 0097           ;  */
+ 0097           ; 
+ 0097           ; Block ValeurBlockDroit (Block block) {
+ 0097                   .dbline 32
+ 0097           ;       block.checksum = getWord_CamDroite();
+ 0097 7C0000            xcall _getWord_CamDroite
+ 009A 62D000            mov REG[0xd0],>__r0
+ 009D 52FA              mov A,[X-6]
+ 009F 0102              add A,2
+ 00A1 5300              mov [__r3],A
+ 00A3 52F9              mov A,[X-7]
+ 00A5 0900              adc A,0
+ 00A7 60D5              mov REG[0xd5],A
+ 00A9 5100              mov A,[__r0]
+ 00AB 3F00              mvi [__r3],A
+ 00AD 5100              mov A,[__r1]
+ 00AF 3F00              mvi [__r3],A
+ 00B1                   .dbline 33
+ 00B1           ;       block.signature = getWord_CamDroite();
+ 00B1 7C0000            xcall _getWord_CamDroite
+ 00B4 62D000            mov REG[0xd0],>__r0
+ 00B7 52FA              mov A,[X-6]
+ 00B9 5300              mov [__r3],A
+ 00BB 52F9              mov A,[X-7]
+ 00BD 60D5              mov REG[0xd5],A
+ 00BF 5100              mov A,[__r0]
+ 00C1 3F00              mvi [__r3],A
+ 00C3 5100              mov A,[__r1]
+ 00C5 3F00              mvi [__r3],A
+ 00C7                   .dbline 34
+ 00C7           ;       block.x = getWord_CamDroite();
+ 00C7 7C0000            xcall _getWord_CamDroite
+ 00CA 62D000            mov REG[0xd0],>__r0
+ 00CD 52FA              mov A,[X-6]
+ 00CF 0104              add A,4
+ 00D1 5300              mov [__r3],A
+ 00D3 52F9              mov A,[X-7]
+ 00D5 0900              adc A,0
+ 00D7 60D5              mov REG[0xd5],A
+ 00D9 5100              mov A,[__r0]
+ 00DB 3F00              mvi [__r3],A
+ 00DD 5100              mov A,[__r1]
+ 00DF 3F00              mvi [__r3],A
+ 00E1                   .dbline 35
+ 00E1           ;       block.y = getWord_CamDroite();
+ 00E1 7C0000            xcall _getWord_CamDroite
+ 00E4 62D000            mov REG[0xd0],>__r0
+ 00E7 52FA              mov A,[X-6]
+ 00E9 0106              add A,6
+ 00EB 5300              mov [__r3],A
+ 00ED 52F9              mov A,[X-7]
+ 00EF 0900              adc A,0
+ 00F1 60D5              mov REG[0xd5],A
+ 00F3 5100              mov A,[__r0]
+ 00F5 3F00              mvi [__r3],A
+ 00F7 5100              mov A,[__r1]
+ 00F9 3F00              mvi [__r3],A
+ 00FB                   .dbline 36
+ 00FB           ;       block.width = getWord_CamDroite();
+ 00FB 7C0000            xcall _getWord_CamDroite
+ 00FE 62D000            mov REG[0xd0],>__r0
+ 0101 52FA              mov A,[X-6]
+ 0103 0108              add A,8
+ 0105 5300              mov [__r3],A
+ 0107 52F9              mov A,[X-7]
+ 0109 0900              adc A,0
+ 010B 60D5              mov REG[0xd5],A
+ 010D 5100              mov A,[__r0]
+ 010F 3F00              mvi [__r3],A
+ 0111 5100              mov A,[__r1]
+ 0113 3F00              mvi [__r3],A
+ 0115                   .dbline 37
+ 0115           ;       block.height = getWord_CamDroite();
+ 0115 7C0000            xcall _getWord_CamDroite
+ 0118 62D000            mov REG[0xd0],>__r0
+ 011B 52FA              mov A,[X-6]
+ 011D 010A              add A,10
+ 011F 5300              mov [__r3],A
+ 0121 52F9              mov A,[X-7]
+ 0123 0900              adc A,0
+ 0125 60D5              mov REG[0xd5],A
+ 0127 5100              mov A,[__r0]
+ 0129 3F00              mvi [__r3],A
+ 012B 5100              mov A,[__r1]
+ 012D 3F00              mvi [__r3],A
+ 012F                   .dbline 38
+ 012F           ;       return (block);
+ 012F 52FA              mov A,[X-6]
+ 0131 5300              mov [__r1],A
+ 0133 52F9              mov A,[X-7]
+ 0135 5300              mov [__r0],A
+ 0137 52FC              mov A,[X-4]
+ 0139 5300              mov [__r3],A
+ 013B 52FB              mov A,[X-5]
+ 013D 5300              mov [__r2],A
+ 013F 5100              mov A,[__r0]
+ 0141 60D4              mov REG[0xd4],A
+ 0143 5100              mov A,[__r2]
+ 0145 60D5              mov REG[0xd5],A
+ 0147 10                push X
+ 0148 570C              mov X,12
+ 014A           X1:
+ 014A 62D000            mov REG[0xd0],>__r0
+ 014D 3E00              mvi A,[__r1]
+ 014F 3F00              mvi [__r3],A
+ 0151 79                dec X
+ 0152 BFF7              jnz X1
+ 0154 20                pop X
+ 0155                   .dbline -2
+ 0155           L4:
+ 0155 20                pop X
+ 0156                   .dbline 0 ; func end
+ 0156 7F                ret
+ 0157                   .dbsym l block -7 pS[.1]
+ 0157                   .dbend
+ 0157                   .dbfunc e ValeurBlockGauche _ValeurBlockGauche fS[.1]
+ 0157           ;          block -> X-7
+ 0157           _ValeurBlockGauche::
+ 0157                   .dbline -1
+ 0157 10                push X
+ 0158 4F                mov X,SP
+ 0159                   .dbline 48
+ 0159           ; }
+ 0159           ; 
+ 0159           ; /**
+ 0159           ;  * \fn                Block ValeurBlockGauche (Block block)
+ 0159           ;  * \brief     Fonction qui retourne une structure Block contenant les données envoyées par la PixyCam de gauche.
+ 0159           ;  * \param     block est la structure Block contenant les données de la caméra gauche
+ 0159           ;  * \return    block est une structure Block contenant les données envoyées par la PixyCam de gauche.
+ 0159           ;  */
+ 0159           ; 
+ 0159           ; Block ValeurBlockGauche (Block block) {
+ 0159                   .dbline 49
+ 0159           ;       block.checksum = getWord_CamGauche();
+ 0159 7C0000            xcall _getWord_CamGauche
+ 015C 62D000            mov REG[0xd0],>__r0
+ 015F 52FA              mov A,[X-6]
+ 0161 0102              add A,2
+ 0163 5300              mov [__r3],A
+ 0165 52F9              mov A,[X-7]
+ 0167 0900              adc A,0
+ 0169 60D5              mov REG[0xd5],A
+ 016B 5100              mov A,[__r0]
+ 016D 3F00              mvi [__r3],A
+ 016F 5100              mov A,[__r1]
+ 0171 3F00              mvi [__r3],A
+ 0173                   .dbline 50
+ 0173           ;       block.signature = getWord_CamGauche();
+ 0173 7C0000            xcall _getWord_CamGauche
+ 0176 62D000            mov REG[0xd0],>__r0
+ 0179 52FA              mov A,[X-6]
+ 017B 5300              mov [__r3],A
+ 017D 52F9              mov A,[X-7]
+ 017F 60D5              mov REG[0xd5],A
+ 0181 5100              mov A,[__r0]
+ 0183 3F00              mvi [__r3],A
+ 0185 5100              mov A,[__r1]
+ 0187 3F00              mvi [__r3],A
+ 0189                   .dbline 51
+ 0189           ;       block.x = getWord_CamGauche();
+ 0189 7C0000            xcall _getWord_CamGauche
+ 018C 62D000            mov REG[0xd0],>__r0
+ 018F 52FA              mov A,[X-6]
+ 0191 0104              add A,4
+ 0193 5300              mov [__r3],A
+ 0195 52F9              mov A,[X-7]
+ 0197 0900              adc A,0
+ 0199 60D5              mov REG[0xd5],A
+ 019B 5100              mov A,[__r0]
+ 019D 3F00              mvi [__r3],A
+ 019F 5100              mov A,[__r1]
+ 01A1 3F00              mvi [__r3],A
+ 01A3                   .dbline 52
+ 01A3           ;       block.y = getWord_CamGauche();
+ 01A3 7C0000            xcall _getWord_CamGauche
+ 01A6 62D000            mov REG[0xd0],>__r0
+ 01A9 52FA              mov A,[X-6]
+ 01AB 0106              add A,6
+ 01AD 5300              mov [__r3],A
+ 01AF 52F9              mov A,[X-7]
+ 01B1 0900              adc A,0
+ 01B3 60D5              mov REG[0xd5],A
+ 01B5 5100              mov A,[__r0]
+ 01B7 3F00              mvi [__r3],A
+ 01B9 5100              mov A,[__r1]
+ 01BB 3F00              mvi [__r3],A
+ 01BD                   .dbline 53
+ 01BD           ;       block.width = getWord_CamGauche();
+ 01BD 7C0000            xcall _getWord_CamGauche
+ 01C0 62D000            mov REG[0xd0],>__r0
+ 01C3 52FA              mov A,[X-6]
+ 01C5 0108              add A,8
+ 01C7 5300              mov [__r3],A
+ 01C9 52F9              mov A,[X-7]
+ 01CB 0900              adc A,0
+ 01CD 60D5              mov REG[0xd5],A
+ 01CF 5100              mov A,[__r0]
+ 01D1 3F00              mvi [__r3],A
+ 01D3 5100              mov A,[__r1]
+ 01D5 3F00              mvi [__r3],A
+ 01D7                   .dbline 54
+ 01D7           ;       block.height = getWord_CamGauche();
+ 01D7 7C0000            xcall _getWord_CamGauche
+ 01DA 62D000            mov REG[0xd0],>__r0
+ 01DD 52FA              mov A,[X-6]
+ 01DF 010A              add A,10
+ 01E1 5300              mov [__r3],A
+ 01E3 52F9              mov A,[X-7]
+ 01E5 0900              adc A,0
+ 01E7 60D5              mov REG[0xd5],A
+ 01E9 5100              mov A,[__r0]
+ 01EB 3F00              mvi [__r3],A
+ 01ED 5100              mov A,[__r1]
+ 01EF 3F00              mvi [__r3],A
+ 01F1                   .dbline 55
+ 01F1           ;       return (block) ;
+ 01F1 52FA              mov A,[X-6]
+ 01F3 5300              mov [__r1],A
+ 01F5 52F9              mov A,[X-7]
+ 01F7 5300              mov [__r0],A
+ 01F9 52FC              mov A,[X-4]
+ 01FB 5300              mov [__r3],A
+ 01FD 52FB              mov A,[X-5]
+ 01FF 5300              mov [__r2],A
+ 0201 5100              mov A,[__r0]
+ 0203 60D4              mov REG[0xd4],A
+ 0205 5100              mov A,[__r2]
+ 0207 60D5              mov REG[0xd5],A
+ 0209 10                push X
+ 020A 570C              mov X,12
+ 020C           X2:
+ 020C 62D000            mov REG[0xd0],>__r0
+ 020F 3E00              mvi A,[__r1]
+ 0211 3F00              mvi [__r3],A
+ 0213 79                dec X
+ 0214 BFF7              jnz X2
+ 0216 20                pop X
+ 0217                   .dbline -2
+ 0217           L6:
+ 0217 20                pop X
+ 0218                   .dbline 0 ; func end
+ 0218 7F                ret
+ 0219                   .dbsym l block -7 pS[.1]
+ 0219                   .dbend
+ 0219                   .dbfunc e EnvoiBlock _EnvoiBlock fV
+ 0219           ;          block -> X-5
+ 0219           _EnvoiBlock::
+ 0219                   .dbline -1
+ 0219 10                push X
+ 021A 4F                mov X,SP
+ 021B                   .dbline 66
+ 021B           ; }
+ 021B           ; 
+ 021B           ; /**
+ 021B           ;  * \fn Block EnvoiBlock (Block block)
+ 021B           ;  * \brief Fonction qui envoie à l'Xbee les données contenues dans une structure Block. 
+ 021B           ;       Les données sont envoyées en 16 bits via UART.
+ 021B           ;  * \param block est la structure Block contenant les données à envoyer.
+ 021B           ;  * \return aucune donné retournée.
+ 021B           ;  */
+ 021B           ; 
+ 021B           ; void EnvoiBlock ( Block block){
+ 021B                   .dbline 67
+ 021B           ;       UART_PutSHexInt(block.signature);
+ 021B 62D000            mov REG[0xd0],>__r0
+ 021E 52FC              mov A,[X-4]
+ 0220 5300              mov [__r1],A
+ 0222 52FB              mov A,[X-5]
+ 0224 60D4              mov REG[0xd4],A
+ 0226 3E00              mvi A,[__r1]
+ 0228 5300              mov [__r0],A
+ 022A 3E00              mvi A,[__r1]
+ 022C 5300              mov [__r1],A
+ 022E 10                push X
+ 022F 5100              mov A,[__r0]
+ 0231 08                push A
+ 0232 5100              mov A,[__r1]
+ 0234 20                pop X
+ 0235 7C0000            xcall _UART_PutSHexInt
+ 0238 20                pop X
+ 0239                   .dbline 68
+ 0239           ;       UART_PutSHexInt(block.x);
+ 0239 62D000            mov REG[0xd0],>__r0
+ 023C 52FC              mov A,[X-4]
+ 023E 0104              add A,4
+ 0240 5300              mov [__r1],A
+ 0242 52FB              mov A,[X-5]
+ 0244 0900              adc A,0
+ 0246 60D4              mov REG[0xd4],A
+ 0248 3E00              mvi A,[__r1]
+ 024A 5300              mov [__r0],A
+ 024C 3E00              mvi A,[__r1]
+ 024E 5300              mov [__r1],A
+ 0250 10                push X
+ 0251 5100              mov A,[__r0]
+ 0253 08                push A
+ 0254 5100              mov A,[__r1]
+ 0256 20                pop X
+ 0257 7C0000            xcall _UART_PutSHexInt
+ 025A 20                pop X
+ 025B                   .dbline 69
+ 025B           ;       UART_PutSHexInt(block.y);
+ 025B 62D000            mov REG[0xd0],>__r0
+ 025E 52FC              mov A,[X-4]
+ 0260 0106              add A,6
+ 0262 5300              mov [__r1],A
+ 0264 52FB              mov A,[X-5]
+ 0266 0900              adc A,0
+ 0268 60D4              mov REG[0xd4],A
+ 026A 3E00              mvi A,[__r1]
+ 026C 5300              mov [__r0],A
+ 026E 3E00              mvi A,[__r1]
+ 0270 5300              mov [__r1],A
+ 0272 10                push X
+ 0273 5100              mov A,[__r0]
+ 0275 08                push A
+ 0276 5100              mov A,[__r1]
+ 0278 20                pop X
+ 0279 7C0000            xcall _UART_PutSHexInt
+ 027C 20                pop X
+ 027D                   .dbline 70
+ 027D           ;       UART_PutSHexInt(block.width);
+ 027D 62D000            mov REG[0xd0],>__r0
+ 0280 52FC              mov A,[X-4]
+ 0282 0108              add A,8
+ 0284 5300              mov [__r1],A
+ 0286 52FB              mov A,[X-5]
+ 0288 0900              adc A,0
+ 028A 60D4              mov REG[0xd4],A
+ 028C 3E00              mvi A,[__r1]
+ 028E 5300              mov [__r0],A
+ 0290 3E00              mvi A,[__r1]
+ 0292 5300              mov [__r1],A
+ 0294 10                push X
+ 0295 5100              mov A,[__r0]
+ 0297 08                push A
+ 0298 5100              mov A,[__r1]
+ 029A 20                pop X
+ 029B 7C0000            xcall _UART_PutSHexInt
+ 029E 20                pop X
+ 029F                   .dbline 71
+ 029F           ;       UART_PutSHexInt(block.height);
+ 029F 62D000            mov REG[0xd0],>__r0
+ 02A2 52FC              mov A,[X-4]
+ 02A4 010A              add A,10
+ 02A6 5300              mov [__r1],A
+ 02A8 52FB              mov A,[X-5]
+ 02AA 0900              adc A,0
+ 02AC 60D4              mov REG[0xd4],A
+ 02AE 3E00              mvi A,[__r1]
+ 02B0 5300              mov [__r0],A
+ 02B2 3E00              mvi A,[__r1]
+ 02B4 5300              mov [__r1],A
+ 02B6 10                push X
+ 02B7 5100              mov A,[__r0]
+ 02B9 08                push A
+ 02BA 5100              mov A,[__r1]
+ 02BC 20                pop X
+ 02BD 7C0000            xcall _UART_PutSHexInt
+ 02C0 20                pop X
+ 02C1                   .dbline -2
+ 02C1           L8:
+ 02C1 20                pop X
+ 02C2                   .dbline 0 ; func end
+ 02C2 7F                ret
+ 02C3                   .dbsym l block -5 pS[.1]
+ 02C3                   .dbend

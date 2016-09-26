@@ -1,0 +1,565 @@
+ 0000                   cpu LMM
+                        .module motor_functions.c
+                        .area text(rom, con, rel)
+ 0000                   .dbfile ./motor_functions.c
+ 0000                   .dbfile C:\Users\germa\Desktop\PROJET~1\PR80B3~1\TOUREL~1\TOUREL~1\motor_functions.c
+ 0000                   .dbfunc e Init_Motor _Init_Motor fV
+ 0000           _Init_Motor::
+ 0000                   .dbline -1
+ 0000                   .dbline 22
+ 0000           ; /**
+ 0000           ;  * \file              motor_functions.c
+ 0000           ;  * \brief             Fonctions pour utiliser les servo-moteurs à l'aide des modules PWM
+ 0000           ;  * \author            Systendo
+ 0000           ;  * \version   1.1
+ 0000           ;  * \date              26 septembre 2016
+ 0000           ;  */
+ 0000           ; 
+ 0000           ; #include <m8c.h>        // part specific constants and macros
+ 0000           ; #include "PSoCAPI.h"    // PSoC API definitions for all User Modules
+ 0000           ; #include "Motor_Functions.h"
+ 0000           ; 
+ 0000           ; /**
+ 0000           ;  * \fn                void Init_Motor(void)
+ 0000           ;  * \brief     Initialisation des Moteurs.
+ 0000           ;  *
+ 0000           ;  * \param     aucun paramètre en entrée.
+ 0000           ;  * \return    aucun parametre.
+ 0000           ;  */
+ 0000           ; 
+ 0000           ; void Init_Motor(void)
+ 0000           ; {
+ 0000                   .dbline 23
+ 0000           ;       PWM16_WritePeriod(PWM_PERIOD);
+ 0000 10                push X
+ 0001 574F              mov X,79
+ 0003 5042              mov A,66
+ 0005 7C0000            xcall _PWM16_WritePeriod
+ 0008                   .dbline 24
+ 0008           ;       PWM16_2_WritePeriod(PWM_PERIOD);
+ 0008 574F              mov X,79
+ 000A 5042              mov A,66
+ 000C 7C0000            xcall _PWM16_2_WritePeriod
+ 000F                   .dbline 26
+ 000F           ;       
+ 000F           ;       PWM16_WritePulseWidth(PWM_Z_PULSEWIDTH_MIN);    // Place le moteur dans une position initiale
+ 000F 5702              mov X,2
+ 0011 501C              mov A,28
+ 0013 7C0000            xcall _PWM16_WritePulseWidth
+ 0016                   .dbline 27
+ 0016           ;       PWM16_2_WritePulseWidth(PWM_X_PULSEWIDTH_MIN);
+ 0016 5703              mov X,3
+ 0018 50E8              mov A,-24
+ 001A 7C0000            xcall _PWM16_2_WritePulseWidth
+ 001D                   .dbline 29
+ 001D           ;       
+ 001D           ;       PWM16_Start();
+ 001D 7C0000            xcall _PWM16_Start
+ 0020                   .dbline 30
+ 0020           ;       PWM16_2_Start();        
+ 0020 7C0000            xcall _PWM16_2_Start
+ 0023 20                pop X
+ 0024                   .dbline -2
+ 0024           L2:
+ 0024                   .dbline 0 ; func end
+ 0024 7F                ret
+ 0025                   .dbend
+ 0025                   .dbfunc e M_Z_Rot_Hor _M_Z_Rot_Hor fV
+ 0025           ;              i -> X-7
+ 0025           ;   pulsewidth_Z -> X-5
+ 0025           _M_Z_Rot_Hor::
+ 0025                   .dbline -1
+ 0025 10                push X
+ 0026 4F                mov X,SP
+ 0027                   .dbline 43
+ 0027           ; }
+ 0027           ; 
+ 0027           ; /**
+ 0027           ;  * \fn                void M_Z_Rot_Hor(int *pulsewidth_Z, int i)
+ 0027           ;  * \brief     Moteur Z rotation horaire. 
+ 0027           ;  *
+ 0027           ;  * \param     int *pulsewidth_Z, int i.
+ 0027           ;  * \return    aucun parametre.
+ 0027           ;  */
+ 0027           ; 
+ 0027           ; 
+ 0027           ; void M_Z_Rot_Hor(int *pulsewidth_Z, int i)
+ 0027           ; {
+ 0027                   .dbline 44
+ 0027           ;       if (i == 0x01)
+ 0027 3DF900            cmp [X-7],0
+ 002A B00B              jnz L4
+ 002C 3DFA01            cmp [X-6],1
+ 002F B006              jnz L4
+ 0031           X0:
+ 0031                   .dbline 46
+ 0031           ;       {
+ 0031           ;               PWM16_Start();
+ 0031                   .dbline 46
+ 0031 10                push X
+ 0032 7C0000            xcall _PWM16_Start
+ 0035 20                pop X
+ 0036                   .dbline 47
+ 0036           ;       }
+ 0036           L4:
+ 0036                   .dbline 48
+ 0036           ;       if (i == 0x00)
+ 0036 3DF900            cmp [X-7],0
+ 0039 B04F              jnz L6
+ 003B 3DFA00            cmp [X-6],0
+ 003E B04A              jnz L6
+ 0040           X1:
+ 0040                   .dbline 50
+ 0040           ;       {
+ 0040           ;               PWM16_Stop();
+ 0040                   .dbline 50
+ 0040 10                push X
+ 0041 7C0000            xcall _PWM16_Stop
+ 0044 20                pop X
+ 0045                   .dbline 51
+ 0045           ;               *pulsewidth_Z = *pulsewidth_Z + PWM_Z_PULSEWIDTH_INCR;
+ 0045 62D000            mov REG[0xd0],>__r0
+ 0048 52FC              mov A,[X-4]
+ 004A 5300              mov [__r1],A
+ 004C 52FB              mov A,[X-5]
+ 004E 60D4              mov REG[0xd4],A
+ 0050 3E00              mvi A,[__r1]
+ 0052 5300              mov [__r0],A
+ 0054 3E00              mvi A,[__r1]
+ 0056 5300              mov [__r1],A
+ 0058 060078            add [__r1],120
+ 005B 0E0000            adc [__r0],0
+ 005E 52FC              mov A,[X-4]
+ 0060 5300              mov [__r3],A
+ 0062 52FB              mov A,[X-5]
+ 0064 60D5              mov REG[0xd5],A
+ 0066 5100              mov A,[__r0]
+ 0068 3F00              mvi [__r3],A
+ 006A 5100              mov A,[__r1]
+ 006C 3F00              mvi [__r3],A
+ 006E                   .dbline 52
+ 006E           ;               PWM16_WritePulseWidth(*pulsewidth_Z);           
+ 006E 52FC              mov A,[X-4]
+ 0070 5300              mov [__r1],A
+ 0072 52FB              mov A,[X-5]
+ 0074 60D4              mov REG[0xd4],A
+ 0076 3E00              mvi A,[__r1]
+ 0078 5300              mov [__r0],A
+ 007A 3E00              mvi A,[__r1]
+ 007C 5300              mov [__r1],A
+ 007E 10                push X
+ 007F 5100              mov A,[__r0]
+ 0081 08                push A
+ 0082 5100              mov A,[__r1]
+ 0084 20                pop X
+ 0085 7C0000            xcall _PWM16_WritePulseWidth
+ 0088 20                pop X
+ 0089                   .dbline 53
+ 0089           ;       }
+ 0089           L6:
+ 0089                   .dbline -2
+ 0089           L3:
+ 0089 20                pop X
+ 008A                   .dbline 0 ; func end
+ 008A 7F                ret
+ 008B                   .dbsym l i -7 I
+ 008B                   .dbsym l pulsewidth_Z -5 pI
+ 008B                   .dbend
+ 008B                   .dbfunc e M_Z_Rot_Anti_Hor _M_Z_Rot_Anti_Hor fV
+ 008B           ;              i -> X-7
+ 008B           ;   pulsewidth_Z -> X-5
+ 008B           _M_Z_Rot_Anti_Hor::
+ 008B                   .dbline -1
+ 008B 10                push X
+ 008C 4F                mov X,SP
+ 008D                   .dbline 67
+ 008D           ; }
+ 008D           ; 
+ 008D           ; 
+ 008D           ; 
+ 008D           ; /**
+ 008D           ;  * \fn void M_Z_Rot_Anti_Hor(int *pulsewidth_Z, int i)
+ 008D           ;  * \brief Moteur Z rotation Anti-horaire.
+ 008D           ;  *
+ 008D           ;  * \param int *pulsewidth_Z, int i.
+ 008D           ;  * \return aucun parametre.
+ 008D           ;  */
+ 008D           ; 
+ 008D           ; void M_Z_Rot_Anti_Hor(int *pulsewidth_Z, int i)
+ 008D           ; {
+ 008D                   .dbline 68
+ 008D           ;       if (i == 0x01)
+ 008D 3DF900            cmp [X-7],0
+ 0090 B00B              jnz L9
+ 0092 3DFA01            cmp [X-6],1
+ 0095 B006              jnz L9
+ 0097           X2:
+ 0097                   .dbline 70
+ 0097           ;       {
+ 0097           ;               PWM16_Start();
+ 0097                   .dbline 70
+ 0097 10                push X
+ 0098 7C0000            xcall _PWM16_Start
+ 009B 20                pop X
+ 009C                   .dbline 71
+ 009C           ;       }
+ 009C           L9:
+ 009C                   .dbline 72
+ 009C           ;       if (i == 0x00)
+ 009C 3DF900            cmp [X-7],0
+ 009F B04F              jnz L11
+ 00A1 3DFA00            cmp [X-6],0
+ 00A4 B04A              jnz L11
+ 00A6           X3:
+ 00A6                   .dbline 74
+ 00A6           ;       {
+ 00A6           ;               PWM16_Stop();
+ 00A6                   .dbline 74
+ 00A6 10                push X
+ 00A7 7C0000            xcall _PWM16_Stop
+ 00AA 20                pop X
+ 00AB                   .dbline 75
+ 00AB           ;               *pulsewidth_Z = *pulsewidth_Z - PWM_Z_PULSEWIDTH_INCR;  
+ 00AB 62D000            mov REG[0xd0],>__r0
+ 00AE 52FC              mov A,[X-4]
+ 00B0 5300              mov [__r1],A
+ 00B2 52FB              mov A,[X-5]
+ 00B4 60D4              mov REG[0xd4],A
+ 00B6 3E00              mvi A,[__r1]
+ 00B8 5300              mov [__r0],A
+ 00BA 3E00              mvi A,[__r1]
+ 00BC 5300              mov [__r1],A
+ 00BE 160078            sub [__r1],120
+ 00C1 1E0000            sbb [__r0],0
+ 00C4 52FC              mov A,[X-4]
+ 00C6 5300              mov [__r3],A
+ 00C8 52FB              mov A,[X-5]
+ 00CA 60D5              mov REG[0xd5],A
+ 00CC 5100              mov A,[__r0]
+ 00CE 3F00              mvi [__r3],A
+ 00D0 5100              mov A,[__r1]
+ 00D2 3F00              mvi [__r3],A
+ 00D4                   .dbline 76
+ 00D4           ;               PWM16_WritePulseWidth(*pulsewidth_Z);   
+ 00D4 52FC              mov A,[X-4]
+ 00D6 5300              mov [__r1],A
+ 00D8 52FB              mov A,[X-5]
+ 00DA 60D4              mov REG[0xd4],A
+ 00DC 3E00              mvi A,[__r1]
+ 00DE 5300              mov [__r0],A
+ 00E0 3E00              mvi A,[__r1]
+ 00E2 5300              mov [__r1],A
+ 00E4 10                push X
+ 00E5 5100              mov A,[__r0]
+ 00E7 08                push A
+ 00E8 5100              mov A,[__r1]
+ 00EA 20                pop X
+ 00EB 7C0000            xcall _PWM16_WritePulseWidth
+ 00EE 20                pop X
+ 00EF                   .dbline 77
+ 00EF           ;       }       
+ 00EF           L11:
+ 00EF                   .dbline -2
+ 00EF           L8:
+ 00EF 20                pop X
+ 00F0                   .dbline 0 ; func end
+ 00F0 7F                ret
+ 00F1                   .dbsym l i -7 I
+ 00F1                   .dbsym l pulsewidth_Z -5 pI
+ 00F1                   .dbend
+ 00F1                   .dbfunc e M_X_Rot_Hor _M_X_Rot_Hor fV
+ 00F1           ;   pulsewidth_X -> X-5
+ 00F1           _M_X_Rot_Hor::
+ 00F1                   .dbline -1
+ 00F1 10                push X
+ 00F2 4F                mov X,SP
+ 00F3                   .dbline 89
+ 00F3           ; }
+ 00F3           ; 
+ 00F3           ; /**
+ 00F3           ;  * \fn void M_X_Rot_Hor(int *pulsewidth_X)
+ 00F3           ;  * \brief Moteur X rotation horaire.
+ 00F3           ;  *
+ 00F3           ;  * \param int *pulsewidth_X.
+ 00F3           ;  * \return aucun parametre.
+ 00F3           ;  */
+ 00F3           ; 
+ 00F3           ; void M_X_Rot_Hor(int *pulsewidth_X)
+ 00F3           ; {
+ 00F3                   .dbline 90
+ 00F3           ;       *pulsewidth_X = PWM_X_PULSEWIDTH_MAX;
+ 00F3 62D000            mov REG[0xd0],>__r0
+ 00F6 52FC              mov A,[X-4]
+ 00F8 5300              mov [__r1],A
+ 00FA 52FB              mov A,[X-5]
+ 00FC 60D5              mov REG[0xd5],A
+ 00FE 5007              mov A,7
+ 0100 3F00              mvi [__r1],A
+ 0102 50D0              mov A,-48
+ 0104 3F00              mvi [__r1],A
+ 0106                   .dbline 91
+ 0106           ;       PWM16_2_WritePulseWidth(*pulsewidth_X); 
+ 0106 52FC              mov A,[X-4]
+ 0108 5300              mov [__r1],A
+ 010A 52FB              mov A,[X-5]
+ 010C 60D4              mov REG[0xd4],A
+ 010E 3E00              mvi A,[__r1]
+ 0110 5300              mov [__r0],A
+ 0112 3E00              mvi A,[__r1]
+ 0114 5300              mov [__r1],A
+ 0116 10                push X
+ 0117 5100              mov A,[__r0]
+ 0119 08                push A
+ 011A 5100              mov A,[__r1]
+ 011C 20                pop X
+ 011D 7C0000            xcall _PWM16_2_WritePulseWidth
+ 0120 20                pop X
+ 0121                   .dbline -2
+ 0121           L13:
+ 0121 20                pop X
+ 0122                   .dbline 0 ; func end
+ 0122 7F                ret
+ 0123                   .dbsym l pulsewidth_X -5 pI
+ 0123                   .dbend
+ 0123                   .dbfunc e M_X_Rot_Anti_Hor _M_X_Rot_Anti_Hor fV
+ 0123           ;   pulsewidth_X -> X-5
+ 0123           _M_X_Rot_Anti_Hor::
+ 0123                   .dbline -1
+ 0123 10                push X
+ 0124 4F                mov X,SP
+ 0125                   .dbline 105
+ 0125           ; }
+ 0125           ; 
+ 0125           ; 
+ 0125           ; 
+ 0125           ; /**
+ 0125           ;  * \fn void M_X_Rot_Anti_Hor(int *pulsewidth_X)
+ 0125           ;  * \brief Moteur X rotation Anti-horaire.
+ 0125           ;  *
+ 0125           ;  * \param int *pulsewidth_X.
+ 0125           ;  * \return aucun parametre.
+ 0125           ;  */
+ 0125           ; 
+ 0125           ; void M_X_Rot_Anti_Hor(int *pulsewidth_X)
+ 0125           ; {
+ 0125                   .dbline 106
+ 0125           ;       *pulsewidth_X = PWM_X_PULSEWIDTH_MIN;
+ 0125 62D000            mov REG[0xd0],>__r0
+ 0128 52FC              mov A,[X-4]
+ 012A 5300              mov [__r1],A
+ 012C 52FB              mov A,[X-5]
+ 012E 60D5              mov REG[0xd5],A
+ 0130 5003              mov A,3
+ 0132 3F00              mvi [__r1],A
+ 0134 50E8              mov A,-24
+ 0136 3F00              mvi [__r1],A
+ 0138                   .dbline 107
+ 0138           ;       PWM16_2_WritePulseWidth(*pulsewidth_X);
+ 0138 52FC              mov A,[X-4]
+ 013A 5300              mov [__r1],A
+ 013C 52FB              mov A,[X-5]
+ 013E 60D4              mov REG[0xd4],A
+ 0140 3E00              mvi A,[__r1]
+ 0142 5300              mov [__r0],A
+ 0144 3E00              mvi A,[__r1]
+ 0146 5300              mov [__r1],A
+ 0148 10                push X
+ 0149 5100              mov A,[__r0]
+ 014B 08                push A
+ 014C 5100              mov A,[__r1]
+ 014E 20                pop X
+ 014F 7C0000            xcall _PWM16_2_WritePulseWidth
+ 0152 20                pop X
+ 0153                   .dbline -2
+ 0153           L14:
+ 0153 20                pop X
+ 0154                   .dbline 0 ; func end
+ 0154 7F                ret
+ 0155                   .dbsym l pulsewidth_X -5 pI
+ 0155                   .dbend
+ 0155                   .dbfunc e Motor_Balay _Motor_Balay fV
+ 0155           ;              i -> X-11
+ 0155           ;   pulsewidth_X -> X-9
+ 0155           ;   pulsewidth_Z -> X-7
+ 0155           ;              a -> X-5
+ 0155           _Motor_Balay::
+ 0155                   .dbline -1
+ 0155 10                push X
+ 0156 4F                mov X,SP
+ 0157                   .dbline 123
+ 0157           ; }
+ 0157           ; 
+ 0157           ; /**
+ 0157           ;  * \fn void Motor_Balay(int *a, int *pulsewidth_Z, int *pulsewidth_X, int i)
+ 0157           ;  * \brief Balayage des moteurs.
+ 0157           ;  *
+ 0157           ;  * \param     int *a                          Pointeur vers un int permettant de vérifier si le maximum de rotation a été
+ 0157           ;                                                               dépassé
+ 0157           ;                       int *pulsewidth_Z       
+ 0157           ;                       int *pulsewidth_X       
+ 0157           ;                       int i                           
+ 0157           ;  * \return aucun parametre.
+ 0157           ;  */
+ 0157           ; 
+ 0157           ; void Motor_Balay(int *a, int *pulsewidth_Z, int *pulsewidth_X, int i)
+ 0157           ; {
+ 0157                   .dbline 124
+ 0157           ;       if(*a == 1)
+ 0157 62D000            mov REG[0xd0],>__r0
+ 015A 52FC              mov A,[X-4]
+ 015C 5300              mov [__r1],A
+ 015E 52FB              mov A,[X-5]
+ 0160 60D4              mov REG[0xd4],A
+ 0162 3E00              mvi A,[__r1]
+ 0164 5300              mov [__r0],A
+ 0166 3E00              mvi A,[__r1]
+ 0168 3C0000            cmp [__r0],0
+ 016B B04D              jnz L16
+ 016D 3901              cmp A,1
+ 016F B049              jnz L16
+ 0171           X4:
+ 0171                   .dbline 126
+ 0171           ;       {
+ 0171           ;               M_Z_Rot_Hor(pulsewidth_Z, i);                           // La caméra tourne selon Z de 0 vers 180°
+ 0171                   .dbline 126
+ 0171 52F5              mov A,[X-11]
+ 0173 08                push A
+ 0174 52F6              mov A,[X-10]
+ 0176 08                push A
+ 0177 52F9              mov A,[X-7]
+ 0179 08                push A
+ 017A 52FA              mov A,[X-6]
+ 017C 08                push A
+ 017D 9EA6              xcall _M_Z_Rot_Hor
+ 017F 38FC              add SP,-4
+ 0181                   .dbline 128
+ 0181           ;               
+ 0181           ;               if(*pulsewidth_Z >= PWM_Z_PULSEWIDTH_MAX)       // La rotation autour de l'axe Z est supérieure à 180°
+ 0181 62D000            mov REG[0xd0],>__r0
+ 0184 52FA              mov A,[X-6]
+ 0186 5300              mov [__r1],A
+ 0188 52F9              mov A,[X-7]
+ 018A 60D4              mov REG[0xd4],A
+ 018C 3E00              mvi A,[__r1]
+ 018E 5300              mov [__r0],A
+ 0190 3E00              mvi A,[__r1]
+ 0192 1198              sub A,-104
+ 0194 5100              mov A,[__r0]
+ 0196 3180              xor A,-128
+ 0198 1988              sbb A,(8 ^ 0x80)
+ 019A C088              jc L17
+ 019C           X5:
+ 019C                   .dbline 130
+ 019C           ;               {
+ 019C           ;                       *a = 0;
+ 019C                   .dbline 130
+ 019C 62D000            mov REG[0xd0],>__r0
+ 019F 52FC              mov A,[X-4]
+ 01A1 5300              mov [__r1],A
+ 01A3 52FB              mov A,[X-5]
+ 01A5 60D5              mov REG[0xd5],A
+ 01A7 5000              mov A,0
+ 01A9 3F00              mvi [__r1],A
+ 01AB 3F00              mvi [__r1],A
+ 01AD                   .dbline 131
+ 01AD           ;                       M_X_Rot_Hor(pulsewidth_X);                              // La caméra tourne selon X et se baisse
+ 01AD 52F7              mov A,[X-9]
+ 01AF 08                push A
+ 01B0 52F8              mov A,[X-8]
+ 01B2 08                push A
+ 01B3 9F3C              xcall _M_X_Rot_Hor
+ 01B5 38FE              add SP,-2
+ 01B7                   .dbline 132
+ 01B7           ;               }
+ 01B7                   .dbline 133
+ 01B7           ;       }
+ 01B7 806B              xjmp L17
+ 01B9           L16:
+ 01B9                   .dbline 134
+ 01B9           ;       else if(*a == 0)
+ 01B9 62D000            mov REG[0xd0],>__r0
+ 01BC 52FC              mov A,[X-4]
+ 01BE 5300              mov [__r1],A
+ 01C0 52FB              mov A,[X-5]
+ 01C2 60D4              mov REG[0xd4],A
+ 01C4 3E00              mvi A,[__r1]
+ 01C6 5300              mov [__r0],A
+ 01C8 3E00              mvi A,[__r1]
+ 01CA 3C0000            cmp [__r0],0
+ 01CD B055              jnz L20
+ 01CF 3900              cmp A,0
+ 01D1 B051              jnz L20
+ 01D3           X6:
+ 01D3                   .dbline 136
+ 01D3           ;       {
+ 01D3           ;               M_Z_Rot_Anti_Hor(pulsewidth_Z, i);                      // La caméra tourne selon Z de 180 vers 0°
+ 01D3                   .dbline 136
+ 01D3 52F5              mov A,[X-11]
+ 01D5 08                push A
+ 01D6 52F6              mov A,[X-10]
+ 01D8 08                push A
+ 01D9 52F9              mov A,[X-7]
+ 01DB 08                push A
+ 01DC 52FA              mov A,[X-6]
+ 01DE 08                push A
+ 01DF 9EAA              xcall _M_Z_Rot_Anti_Hor
+ 01E1 38FC              add SP,-4
+ 01E3                   .dbline 138
+ 01E3           ;               
+ 01E3           ;               if(*pulsewidth_Z <= PWM_Z_PULSEWIDTH_MIN)       // La rotation autour de l'axe Z est inférieure à 0°
+ 01E3 62D000            mov REG[0xd0],>__r0
+ 01E6 52FA              mov A,[X-6]
+ 01E8 5300              mov [__r1],A
+ 01EA 52F9              mov A,[X-7]
+ 01EC 60D4              mov REG[0xd4],A
+ 01EE 3E00              mvi A,[__r1]
+ 01F0 5300              mov [__r0],A
+ 01F2 3E00              mvi A,[__r1]
+ 01F4 5300              mov [__r1],A
+ 01F6 501C              mov A,28
+ 01F8 1200              sub A,[__r1]
+ 01FA 5100              mov A,[__r0]
+ 01FC 3180              xor A,-128
+ 01FE 5300              mov [__rX],A
+ 0200 5082              mov A,(2 ^ 0x80)
+ 0202 1A00              sbb A,[__rX]
+ 0204 C01E              jc L22
+ 0206           X7:
+ 0206                   .dbline 140
+ 0206           ;               {
+ 0206           ;                       *a = 1;
+ 0206                   .dbline 140
+ 0206 62D000            mov REG[0xd0],>__r0
+ 0209 52FC              mov A,[X-4]
+ 020B 5300              mov [__r1],A
+ 020D 52FB              mov A,[X-5]
+ 020F 60D5              mov REG[0xd5],A
+ 0211 5000              mov A,0
+ 0213 3F00              mvi [__r1],A
+ 0215 5001              mov A,1
+ 0217 3F00              mvi [__r1],A
+ 0219                   .dbline 141
+ 0219           ;                       M_X_Rot_Anti_Hor(pulsewidth_X);                 // La caméra tourne selon X et s'élève
+ 0219 52F7              mov A,[X-9]
+ 021B 08                push A
+ 021C 52F8              mov A,[X-8]
+ 021E 08                push A
+ 021F 9F02              xcall _M_X_Rot_Anti_Hor
+ 0221 38FE              add SP,-2
+ 0223                   .dbline 142
+ 0223           ;               }
+ 0223           L22:
+ 0223                   .dbline 143
+ 0223           ;       }       
+ 0223           L20:
+ 0223           L17:
+ 0223                   .dbline -2
+ 0223           L15:
+ 0223 20                pop X
+ 0224                   .dbline 0 ; func end
+ 0224 7F                ret
+ 0225                   .dbsym l i -11 I
+ 0225                   .dbsym l pulsewidth_X -9 pI
+ 0225                   .dbsym l pulsewidth_Z -7 pI
+ 0225                   .dbsym l a -5 pI
+ 0225                   .dbend
