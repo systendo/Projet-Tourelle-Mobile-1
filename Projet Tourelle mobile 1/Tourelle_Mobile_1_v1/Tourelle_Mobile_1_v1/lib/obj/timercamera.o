@@ -1,0 +1,178 @@
+XH
+H 3 areas 28 global symbols
+M timercamera.asm
+A text size 0 flags 0
+dbfile lib/timercamera.asm
+dbfunc 0 ? 0 I
+dbfile TimerCamera.inc
+dbfunc 0 ? 0 I
+dbfile C:/PROGRA~2/Cypress/PSOCDE~1/5.4/Common/CYPRES~1/tools/include/CY8C29~1/m8c.inc
+dbfunc 0 ? 0 I
+dbfile ./lib/TimerCamera.inc
+dbfunc 0 ? 0 I
+dbfile lib/timercamera.asm
+dbfunc 0 ? 0 I
+dbfile memory.inc
+dbfunc 0 ? 0 I
+dbfile lib/timercamera.asm
+dbfunc 0 ? 0 I
+dbfile C:/PROGRA~2/Cypress/PSOCDE~1/5.4/Common/CYPRES~1/tools/include/CY8C29~1/m8c.inc
+dbfunc 0 ? 0 I
+A spim_cam_RAM size 0 flags 20
+A UserModules size A8 flags 0
+dbfile lib/timercamera.asm
+dbfunc 0 ? 0 I
+dbline 2 0
+dbline 5F 3
+dbline 2 4
+dbline 7B 7
+dbline 2 8
+dbline 97 B
+dbline 2 C
+dbline B3 F
+dbline CE 10
+dbline CF 11
+dbline D0 13
+dbline D1 15
+dbline D2 17
+dbline D3 19
+dbline D4 1B
+dbline 3 1D
+dbline 4 1F
+dbline D6 21
+dbline F2 22
+dbline F3 23
+dbline F4 25
+dbline F5 27
+dbline F6 29
+dbline F7 2B
+dbline F8 2D
+dbline 3 2F
+dbline 4 31
+dbline FA 33
+dbline 3 34
+dbline 3 36
+dbline 11A 38
+dbline 11B 3B
+dbline 11C 3D
+dbline 11D 3F
+dbline 11E 41
+dbline 11F 43
+dbline 120 45
+dbline 3 47
+dbline 4 49
+dbline 122 4B
+dbline 3 4C
+dbline 3 4E
+dbline 158 50
+dbline 159 52
+dbline 15C 53
+dbline 15D 55
+dbline 15E 56
+dbline 15F 58
+dbline 160 59
+dbline 161 5B
+dbline 166 5C
+dbline 16A 5E
+dbline 16B 61
+dbline 16C 63
+dbline 16D 65
+dbline 16E 67
+dbline 16F 69
+dbline 170 6B
+dbline 173 6D
+dbline 174 6F
+dbline 175 72
+dbline 176 74
+dbline 178 76
+dbline 2 77
+dbline 2 79
+dbline 181 7C
+dbline 182 7D
+dbline 183 7F
+dbline 184 80
+dbline 185 82
+dbline 186 83
+dbline 189 85
+dbline 18A 86
+dbline 18D 88
+dbline 3 89
+dbline 4 8B
+dbline 192 8D
+dbline 3 8E
+dbline 3 90
+dbline 1C2 92
+dbline 1C6 94
+dbline 1C7 97
+dbline 1C8 99
+dbline 1C9 9B
+dbline 1CA 9D
+dbline 1CB 9F
+dbline 1CC A1
+dbline 3 A3
+dbline 4 A5
+dbline 1CE A7
+S TimerCamera_ReadCounter Def004C
+S $sb$TimerCamera_ReadCompareValue Def0034
+S $se$TimerCamera_ReadCompareValue Def004C
+S _TimerCamera_Start Def0008
+S TimerCamera_WritePeriod Def0010
+S TimerCamera_EnableInt Def0000
+S TimerCamera_ReadTimer Def008E
+S $sb$TimerCamera_EnableInt Def0000
+S $se$TimerCamera_EnableInt Def0004
+S $sb$TimerCamera_ReadTimer Def008E
+S $se$TimerCamera_ReadTimer Def00A8
+S _TimerCamera_ReadCompareValue Def0034
+S TimerCamera_ReadTimerSaveCV Def004C
+S TimerCamera_Stop Def000C
+S TimerCamera_CaptureCounter Def008E
+S _TimerCamera_ReadCounter Def004C
+S $sb$TimerCamera_ReadTimerSaveCV Def004C
+S $sb$TimerCamera_Stop Def000C
+S $se$TimerCamera_ReadTimerSaveCV Def008E
+S $se$TimerCamera_Stop Def0010
+S _TimerCamera_WritePeriod Def0010
+S TimerCamera_WriteCompareValue Def0022
+S _TimerCamera_EnableInt Def0000
+S _TimerCamera_ReadTimer Def008E
+S TimerCamera_DisableInt Def0004
+S $sb$_TimerCamera_WritePeriod Def0010
+S $se$_TimerCamera_WritePeriod Def0022
+S $sb$TimerCamera_DisableInt Def0004
+S $se$TimerCamera_DisableInt Def0008
+S _TimerCamera_ReadTimerSaveCV Def004C
+S _TimerCamera_Stop Def000C
+S TimerCamera_Start Def0008
+S _TimerCamera_CaptureCounter Def008E
+S $sb$TimerCamera_Start Def0008
+S $se$TimerCamera_Start Def000C
+S _TimerCamera_WriteCompareValue Def0022
+S _TimerCamera_DisableInt Def0004
+S TimerCamera_ReadCompareValue Def0034
+S $sb$_TimerCamera_WriteCompareValue Def0022
+S $se$_TimerCamera_WriteCompareValue Def0034
+T 00 00 43 E1 40 7F 41 E1 BF 7F 43 33 01 7F 41 33
+R 00 00 00 02
+T 00 0E FE 7F 4F 52 FB 60 39 52 FC 60 35 52 FD 60
+R 00 00 00 02
+T 00 1C 31 70 3F 71 C0 7F 4F 52 FB 60 3A 52 FC 60
+R 00 00 00 02
+T 00 2A 36 52 FD 60 32 70 3F 71 C0 7F 70 BF 60 D3
+R 00 00 00 02
+T 00 38 56 00 00 5D 3A 54 01 5D 36 54 02 5D 32 54
+R 00 00 00 02
+T 00 46 03 70 3F 71 C0 7F 70 BF 60 D3 5D 33 08 5D
+R 00 00 00 02
+T 00 54 3A 08 5D 36 08 5D 32 08 5D 30 56 00 00 5D
+R 00 00 00 02
+T 00 62 3A 54 01 5D 36 54 02 5D 32 54 03 50 00 49
+R 00 00 00 02
+T 00 70 F7 01 A0 03 50 01 5C 70 FE 41 33 FE 18 60
+R 00 00 00 02
+T 00 7E 32 18 60 36 18 60 3A 18 60 33 10 70 3F 71
+R 00 00 00 02
+T 00 8C C0 7E 70 BF 60 D3 5D 30 56 00 00 5D 3A 54
+R 00 00 00 02
+T 00 9A 01 5D 36 54 02 5D 32 54 03 70 3F 71 C0 7F
+R 00 00 00 02
